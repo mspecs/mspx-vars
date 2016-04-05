@@ -67,7 +67,7 @@ export const TAG = {
     },
     empty(string, values) {
         return values ? values + string : '';
-    }
+    },
 };
 
 

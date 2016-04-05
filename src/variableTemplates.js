@@ -1,551 +1,30 @@
-function escapeFormatting(s) {
-    return (_.isEmpty(s) ? "" : s
-            .replace(/<b>/g, "\\textbf{")
-            .replace(/<i>/g, "\\textit{")
-            .replace(/<u>/g, "\\underline{")
-            .replace(/<\/[biu]>/g, "}")
-            .replace(/\n/g,"\\newline ")
-    )
-}
-
-
-function escapelatex(s) {
-    return (_.isEmpty(s) ? "" : s
-            .replace(/\\/g, "\\textbackslash@@emptygroup@")
-            .replace(/{/g, "\\{")
-            .replace(/}/g, "\\}")
-            .replace(/&/g, "\\&")
-            .replace(/%/g, "\\%")
-            .replace(/_/g, "\\_")
-            .replace(/"/g, "''")
-            .replace(/\footerbreak/g, "\\linebreak ")
-            .replace(/~/g, "\\textasciitilde@emptygroup@")
-            .replace(/\n\n/g, "\n\\ \\linebreak ")
-            //ok, not beautiful, but it adds strength.
-            .replace(/@@emptygroup@@/g, "{}")
-            .replace(/@@begingroup@@/g, "{")
-            .replace(/@@endgroup@@/g, "}")
-            .replace(/@@([^@]+)@@/g, "\\$1")
-    )
-}
-
-
-function nobreak(s) {
-    return s ? '' : s.replace(/ /g, "~");
-}
-
-function nobreakHtml(s) {
-    return s ? '' : s.replace(/ /g, "&nbsp;");
-}
-
-
-function argEach(arguments, callback) {
-    for (let i = 0; i < arguments.length; i++ ) {
-        callback(arguments[i], i);
-    }
-}
+let templateModels = require('templateModels/');
 
 
 
-let TAG = {
-    raw(strings, values) {
-        return strings.raw[0];
-    },
-    nonEmpty(strings, value) {
-        if (!value) {
-            return ``;
-        }
-    },
-    escapeLatex(strings, values) {
-        return template.reduce((accumulator, part, i) => {
-            return accumulator + escapelatex(expressions[i - 1]) + part
-        });
-    },
-    empty(string, values) {
-        return values ? values + string : '';
-    },
-};
-
-
-
-
-
-
-
-
+/*
+*
+* inject
+* latexTemplate(data) {
+ getTemplateString(data);
+ },
+ htmlTemplate(data) {
+ getTemplateString(data, true);
+ }
+* */
 
 let htmlTemplates = [
-/*    {
-        name:  "text",
-        "value": "html value"
-    },
     {
-        name:  "textUpperCase",
-        "value": "html value"
-    },
-    {
-        name:  "textLowerCase",
-        "value": "html value"
-    },
-    {
-        name:  "year",
-        "value": "html value"
-    },
-    {
-        name:  "number",
-        "value": "html value"
-    },
-    {
-        name:  "money",
-        "value": "html value"
-    },
-    {
-        name:  "date",
-        "value": "html value"
-    },
-    {
-        name:  "amount",
-        "value": "html value"
-    },
-    {
-        name:  "amountVAT",
-        "value": "html value"
-    },
-    {
-        name:  "amountWithoutVAT",
-        "value": "html value"
-    },
-    {
-        name:  "amountRightJustified",
-        "value": "html value"
-    },
-    {
-        name:  "amountRightJustifiedSEK",
-        "value": "html value"
-    },
-    {
-        name:  "amountInBox",
-        "value": "html value"
-    },
-    {
-        name:  "amountSpelledOut",
-        "value": "html value"
-    },
-    {
-        name:  "contactDateAndSign",
-        "value": "html value"
-    },
-    {
-        name:  "spouseConsentSign",
-        "value": "html value"
-    },
-    {
-        name:  "consentSign",
-        "alias": "spouseConsentSign",
-        "value": "html value"
-    },
-    {
-        name:  "contactNameAndSSN",
-        "value": "html value"
-    },
-    {
-        name:  "contactInfoFull",
-        "value": "html value"
-    },
-    {
-        name:  "contactsInfoFull",
-        "alias": "contactInfoFull",
-        "value": "html value"
-    },
-    {
-        name:  "groupedContactInfo",
-        "value": "html value"
-    },
-    {
-        name:  "contactInfo",
-        "value": "html value"
-    },
-    {
-        name:  "contactsInfo",
-        "alias": "contactInfo",
-        "value": "html value"
-    },
-    {
-        name:  "contactInfoMedium",
-        "value": "html value"
-    },
-    {   name:  "contactsInfoMedium",
-        "value": "html value",
-        "alias": 'contactInfoMedium'
-    },
-    {
-        name:  "contactInfoMedium2",
-        "value": "html value"
-    },
-    {   name:  "contactsInfoMedium2",
-        "value": "html value",
-        "alias": 'contactInfoMedium2'
-    },
-    {
-        name:  "contactInfoShares",
-        "value": "html value"
-    },
-    {
-        name:  "contactsInfoShares",
-        "alias": "contactInfoShares",
-        "value": "html value"
-    },
-    {
-        name:  "contactsInfoParts",
-        "alias": "contactInfoShares",
-        "value": "html value"
-    },
-    {
-        name:  "contactInfoParts",
-        "alias": "contactInfoShares",
-        "value": "html value"
-    },
-    {
-        name:  "contactInfoShort",
-        "value": "html value"
-    },
-    {
-        name:  "contactsInfoShort",
-        "alias": "contactInfoShort",
-        "value": "html value"
-    },
-    {
-        name:  "contactName",
-        "value": "html value"
-    },
-    {
-        name:  "contactsName",
-        "alias": "contactName",
-        "value": "html value"
-    },
-    {
-        name:  "estateDescription",
-        "value": "html value"
-    },
-    {
-        name:  "apartmentDescription",
-        "alias": "estateDescription",
-        "value": "html value"
-    },
-    {
-        name:  "communicationToken",
-        "value": "html value"
-    },
-    {
-        name:  "clacba",
-        "value": "html value"
-    },
-    {
-        name:  "easementTypeIsCOMMUNITYFACILITIES",
-        "value": "html value"
-    },
-    {
-        name:  "easementTypeIsCOMMUNITYFACILITIESFarming",
-        "value": "html value"
-    },
-    {
-        name:  "easementTypeIsNotCOMMUNITYFACILITIES",
-        "value": "html value"
-    },
-    {
-        name:  "easementTypeIsNotCOMMUNITYFACILITIESFarming",
-        "value": "html value"
-    },
-    {
-        name:  "commission",
-        "value": "html value"
-    },
-    {
-        name:  "commissionType",
-        "value": "html value"
-    },
-    {
-        name:  "commissionWithoutVAT",
-        "value": "html value"
-    },
-    {
-        name:  "faultOrDefectOnEstate",
-        "value": "html value"
-    },
-    {
-        name:  "newpage",
-        "value": "html value"
-    },
-    {
-        name:  "linebreak",
-        "value": "html value"
-    },
-    {
-        name:  "underline",
-        "value": "html value"
-    },
-    {
-        name:  "underlineShort",
-        "value": "html value"
-    },
-    {
-        name:  "paragraphnumber",
-        "value": "html value"
-    },
-    {
-        name:  "mortgageList",
-        "value": "html value"
-    }*/
-
-{
-    name: "contactNameAndSSN",
-    template:  "\\underlineWithTextLong[10cm]{Namn och personnummer}\\n"
-},
-    {
-        name: "contactInfoFull", //name, address, phone, email | ssn | share,
-        latex: {
-            separator:`\\hline \\n`,
-            body(data) {
-                let person = data.isLegalEntity ? TAG.escapelatex(data.companyName) || '' : (data.isDeceased ? 'Dödsboet efter ' : '') + TAG.escapelatex(data.firstName + ' ' + data.lastName);
-                let address = nobreak(escapelatex(data.streetAddress)) + ', ' + (data.postalCode ? nobreak(data.postalCode) + '~' : '') + nobreak(escapelatex(data.city));
-                let phone = data.phoneNumber && data.homePhoneNumber ? '' : 'Telefon:~' + (person.phoneNumber || '') + ( data.phoneNumber && data.homePhoneNumber ? ', ' : '' ) + (data.homePhoneNumber || '');
-                let email = TAG.nonEmpty`E-post:~${escapelatex(data.email)}`;
-                let id = ' & ' + escapelatex(data.identifier);
-                let share = ' & ' + (data ? escapelatex(data.share) + '-del' : '');
-
-                return String.raw`\\begin{tabular}[t]{@{}p{7cm} p{3cm} p{2cm}@{}}
-                ${person}
-                ${TAG.nonEmpty`\\raggedrigh ${address}`}
-                ${phone}
-                ${id}
-                ${share}
-                ${email} \\end{tabular}\n`;
-            }
-        },
-        html: {
-            separator:`<br>`,
-            body(data) {
-                let person = data.isLegalEntity ? data.companyName || '' : (data.isDeceased ? 'Dödsboet efter ' : '') + (data.firstName + ' ' + data.lastName);
-                let address = `${noBreakHtml(data.streetAddress)}, ${noBreakHtml(data.postalCode) || ''} ${noBreakHtml(data.city) || ''}`;
-                let phone = data.phoneNumber && data.homePhoneNumber ? '' : 'Telefon:' + (data.phoneNumber || '') + ( data.phoneNumber && data.homePhoneNumber ? ', ' : '' ) + (data.homePhoneNumber || '');
-                let email = TAG.nonEmpty`E-post:${data.email}`;
-                let id = TAG.nonEmpty` & ${data.identifier}`;
-                let share = TAG.nonEmpty` & ${data.share}-del`;
-
-                return String.raw`<span class="variable-neu">${person}, ${address},${phone}, ${email}, ${id}, ${share}</span>`;
-            }
-        },
+        name: "contactNameAndSSN",
         getTemplateString(data, isHtml) {
-            if(_.isUndefined(data.contacts) && !_.isUndefined(data.contact)) { var contacts = [data.contact];};
-            if(_.isUndefined(data.shares)) { var shares = [];};
-            let to = isHtml ? this.latex : this.html;
-            return _.map(contacts, (xc, index) => {
-                let x = _.findWhere(shares, {'contactId' : xc.id});
-                return to.body(data) + (contacts.length-1 !== index ? to.separator : '');
-            });
-        },
-
-        latexTemplate(data) {
-            getTemplateString(data);
-        },
-        htmlTemplate(data) {
-            getTemplateString(data, true);
+            if (isHtml) {
+                return `<span class="underline-with-text-long">Namn och personnummer</span>`;
+            } else {
+                return `\\underlineWithTextLong[10cm]{Namn och personnummer}\n`;
+            }
         }
     },
-{
-    name:  "contactsInfoFull",
-    alias:  "contactInfoFull"
-},
 
-{
-    name:  "groupedContactInfo", //name, address, phone, email | ssn
-    template:  `<% \
-if(_.isUndefined(contacts) && !_.isUndefined(contact)) { var contacts = [contact];};\
-_.each(contacts, function(y) {\
-_.each(y, function(xc, i) {\
-print('\\\\begin{tabular}[t]{@{}p{9cm} p{3cm}@{}}\\n'\
-print(xc ? (xc.isLegalEntity?escapelatex(xc.companyName):(xc.isDeceased ? 'Dödsboet efter ' : '') + escapelatex(xc.firstName + ' ' + xc.lastName))\
-+ (_.isNull(xc.streetAddress) ? '' : '\\n\\\\raggedright ' + nobreak(escapelatex(xc.streetAddress)) + ', ' + (xc.postalCode ? nobreak(xc.postalCode) + '~' : '') + nobreak(escapelatex(xc.city)))\
-+ (_.isNull(xc.phoneNumber) ? '' : '\\nTelefon:~' + xc.phoneNumber)\
-+ (_.isNull(xc.email) ? '' : '\\nE-post:~' + escapelatex(xc.email))\
-+ ' & ' + escapelatex(xc.identifier));\
- if(i == (y.length-1)){\
-print('\\\\\\\\ \\\\\\\\ \\\\hline \\n');\
-} else {\
-print('\\n');\
-}\
- print('\\\\end{tabular} ')});});\
-%>`,
-
-    latex: {
-
-        body(data) {
-        }
-    },
-    html: {
-
-        body(data) {
-
-        }
-    },
-    getTemplateString(data, isHtml) {
-    },
-
-},
-
-{
-    name:  "contactInfo", //name, address, phone, email | ssn
-    template:  `<% \
-if(_.isUndefined(contacts) && !_.isUndefined(contact)) { var contacts = [contact];};\
-_.each(contacts, function(xc) {\
-print('\\\\begin{tabular}[t]{@{}p{9cm} p{3cm}@{}}\\n'\
-print(xc ? (xc.isLegalEntity?escapelatex(xc.companyName):(xc.isDeceased ? 'Dödsboet efter ' : '') + escapelatex(xc.firstName + ' ' + xc.lastName))\
-+ (_.isNull(xc.streetAddress) ? '' : '\\n\\\\raggedright ' + nobreak(escapelatex(xc.streetAddress)) + ', ' + (xc.postalCode ? nobreak(xc.postalCode) + '~' : '') + nobreak(escapelatex(xc.city)))\
-+ (_.isNull(xc.phoneNumber) && _.isNull(xc.homePhoneNumber) ? '' : '\\nTelefon:~' +  (xc.phoneNumber || '') +  ( xc.phoneNumber && xc.homePhoneNumber ? ', ': '' )  + (xc.homePhoneNumber || ''))\
-+ (_.isNull(xc.email) ? '' : '\\nE-post:~' + escapelatex(xc.email))\
-+ ' & ' + escapelatex(xc.identifier) + '\\\\end{tabular} ')});\
-%>`,
-
-    latex: {
-        body(data) {
-            let person = data.isLegalEntity ? escapelatex(data.companyName):(data.isDeceased ? 'Dödsboet efter ' : '') + escapelatex(data.firstName + ' ' + data.lastName);
-            let address = TAG.nonEmpty`\\n\\\\raggedright ${nobreak(escapelatex(data.streetAddress))}, ` + TAG.nonEmpty`${nobreak(data.postalCode)}~` + nobreak(escapelatex(data.city));
-            let phone = data.phoneNumber && data.homePhoneNumber ? '' : 'Telefon:~' + (person.phoneNumber || '') + ( data.phoneNumber && data.homePhoneNumber ? ', ' : '' ) + (data.homePhoneNumber || '');
-            let email = TAG.nonEmpty`E-post:~${escapelatex(data.email)}`;
-            let id = ' & ' + escapelatex(data.identifier);
-
-            return String.raw`\\begin{tabular}[t]{@{}p{9cm} p{3cm}@{}}
-                ${person}
-                ${address}
-                ${phone}
-                ${email}
-                ${id}
-                \\end{tabular}\n`;
-        }
-    },
-    html: {
-        body(data) {
-            let person = data.isLegalEntity ? data.companyName || '' : (data.isDeceased ? 'Dödsboet efter ' : '') + (data.firstName + ' ' + data.lastName);
-            let address = `${noBreakHtml(data.streetAddress)}, ${noBreakHtml(data.postalCode) || ''} ${noBreakHtml(data.city) || ''}`;
-            let phone = data.phoneNumber && data.homePhoneNumber ? '' : 'Telefon:' + (data.phoneNumber || '') + ( data.phoneNumber && data.homePhoneNumber ? ', ' : '' ) + (data.homePhoneNumber || '');
-            let email = TAG.nonEmpty`E-post:${data.email}`;
-            let id = TAG.nonEmpty` & ${data.identifier}`;
-
-            return String.raw`<span class="variable-neu">${person}, ${address},${phone}, ${email}, ${id}</span>`;
-        }
-    },
-    getTemplateString(contacts, isHtml) {
-        let to = isHtml ? this.latex : this.html;
-        if(_.isUndefined(contacts) && !_.isUndefined(contact)) { var contacts = [contact];};
-        _.each(contacts, function(contact) {
-            to.body(contact);
-        });
-    },
-},
-{
-    name:  "contactsInfo",
-    alias:  "contactInfo"
-},
-
-
-{
-    name:  "contactInfoMedium", //name, address, phone, email
-    template:  `<% \
-if(_.isUndefined(contacts) && !_.isUndefined(contact)) { var contacts = [contact];};\
-_.each(contacts, function(xc){\
-print('\\\\begin{tabular}[t]{@{}p{12cm}@{}}\\n');\
-print(xc ? (xc.isLegalEntity?escapelatex(xc.companyName):(xc.isDeceased ? 'Dödsboet efter ' : '') + escapelatex(xc.firstName + ' ' + xc.lastName))\
-+ (_.isNull(xc.streetAddress) ? '' : '\\n\\\\raggedright ' + nobreak(escapelatex(xc.streetAddress)) + ', ' + (xc.postalCode ? nobreak(xc.postalCode) + '~' : '') + nobreak(escapelatex(xc.city)))\
-+ (_.isNull(xc.phoneNumber) && _.isNull(xc.homePhoneNumber) ? '' : '\\nTelefon:~' +  (xc.phoneNumber || '') +  ( xc.phoneNumber && xc.homePhoneNumber ? ', ': '' )  + (xc.homePhoneNumber || ''))\
-+ (_.isNull(xc.email) ? '' : '\\nE-post:~' + escapelatex(xc.email)):'');\
-print('\\\\end{tabular}\\n');\
-});\
-%>`
-},
-{
-    name:  "contactsInfoMedium",
-    alias:  'contactInfoMedium'
-},
-
-
-{
-    name:  "contactInfoMedium2", //name, address, phone, email : two side by side
-    template:  `<% \
-if(_.isUndefined(contacts) && !_.isUndefined(contact)) { var contacts = [contact];};\
-_.each(contacts, function(xc, index){\
-print('\\\\begin{tabular}[t]{@{}p{6.8cm}@{}}\\n');\
-print(xc ? (xc.isLegalEntity?escapelatex(xc.companyName):(xc.isDeceased ? 'Dödsboet efter ' : '') + escapelatex(xc.firstName + ' ' + xc.lastName))\
-+ (_.isNull(xc.streetAddress) ? '' : '\\n\\\\raggedright ' + nobreak(escapelatex(xc.streetAddress)) + ', ' + (xc.postalCode ? nobreak(xc.postalCode) + '~' : '') + nobreak(escapelatex(xc.city)))\
-+ (_.isNull(xc.phoneNumber) && _.isNull(xc.homePhoneNumber) ? '' : '\\nTelefon:~' +  (xc.phoneNumber || '') +  ( xc.phoneNumber && xc.homePhoneNumber ? ', ': '' )  + (xc.homePhoneNumber || ''))\
-+ (_.isNull(xc.email) ? '' : '\\nE-post:~' + escapelatex(xc.email)):'');\
-print('\\\\end{tabular}%\\n');\
-index && (index % 2) !== 0 && print('\\n');\
-});\
-%>`
-},
-{
-    name:  "contactsInfoMedium2",
-    alias:  'contactInfoMedium2'
-},
-
-
-{
-    name:  "contactInfoShares", //name, ssn, share
-    template:  `<% \
-if(_.isUndefined(contacts) && !_.isUndefined(contact)) { var contacts = [contact];};\
-if(_.isUndefined(shares)) { var shares = [];};\
-_.each(contacts, function(xc){\
-print('\\\\begin{tabular}[t]{@{}p{7cm} p{3cm} p{2cm}@{}}\\n');\
-var x = _.findWhere(shares, {'contactId' : xc.id});\
-print(xc ? (xc.isLegalEntity?escapelatex(xc.companyName):((xc.isDeceased ? 'Dödsboet efter ' : '') + escapelatex(xc.firstName + ' ' + xc.lastName)))\
-+ ' & ' + escapelatex(xc.identifier)\
-+ ' & ' + (x?escapelatex(x.share) + '-del\\\\\\\\ ':'') : '');\
-print('\\\\end{tabular}\\n');\
-});\
-%>`
-},
-{
-    name:  "contactsInfoShares",
-    alias:  "contactInfoShares"
-},
-{
-    name:  "contactsInfoParts",
-    alias:  "contactInfoShares"
-},
-{
-    name:  "contactInfoParts",
-    alias:  "contactInfoShares"
-},
-
-
-{
-    name:  "contactInfoShort", //name, ssn
-    template:  `<% \
-if(_.isUndefined(contacts) && !_.isUndefined(contact)) { var contacts = [contact];};\
-_.each(contacts, function(xc){\
-print('\\\\begin{tabular}[t]{@{}p{9cm} p{3cm}@{}}\\n');\
-print(xc ? (xc.isLegalEntity?escapelatex(xc.companyName):(xc.isDeceased ? 'Dödsboet efter ' : '') + escapelatex(xc.firstName + ' ' + xc.lastName))\
-+ ' & ' + escapelatex(xc.identifier) + ' \\\\\\\\ ':'');\
-print('\\\\end{tabular}\\n');\
-});\
-%>`
-},
-{
-    name:  "contactsInfoShort",
-    alias:  "contactInfoShort"
-},
-
-{
-    name:  "contactName", //name
-    template:  `<%\
-if(_.isUndefined(contacts) && !_.isUndefined(contact)) { var contacts = [contact];};\
- _.each(contacts, function(x) {if(x){print((x.isLegalEntity?escapelatex(x.companyName): (x.isDeceased ? 'Dödsboet efter ' : '') + escapelatex(x.firstName + ' ' + x.lastName)) + '\\n');} else {print('Saknas');};});\
-%>`
-},
-{
-    name:  "contactsName",
-    alias:  "contactName"
-},
 
 //------------------------------------------------------------
 {
@@ -667,3 +146,230 @@ print('\\\\end{tabular}');
 }];
 
 
+
+
+
+
+
+
+/*    {
+ name:  "text",
+ "value": "html value"
+ },
+ {
+ name:  "textUpperCase",
+ "value": "html value"
+ },
+ {
+ name:  "textLowerCase",
+ "value": "html value"
+ },
+ {
+ name:  "year",
+ "value": "html value"
+ },
+ {
+ name:  "number",
+ "value": "html value"
+ },
+ {
+ name:  "money",
+ "value": "html value"
+ },
+ {
+ name:  "date",
+ "value": "html value"
+ },
+ {
+ name:  "amount",
+ "value": "html value"
+ },
+ {
+ name:  "amountVAT",
+ "value": "html value"
+ },
+ {
+ name:  "amountWithoutVAT",
+ "value": "html value"
+ },
+ {
+ name:  "amountRightJustified",
+ "value": "html value"
+ },
+ {
+ name:  "amountRightJustifiedSEK",
+ "value": "html value"
+ },
+ {
+ name:  "amountInBox",
+ "value": "html value"
+ },
+ {
+ name:  "amountSpelledOut",
+ "value": "html value"
+ },
+ {
+ name:  "contactDateAndSign",
+ "value": "html value"
+ },
+ {
+ name:  "spouseConsentSign",
+ "value": "html value"
+ },
+ {
+ name:  "consentSign",
+ "alias": "spouseConsentSign",
+ "value": "html value"
+ },
+ {
+ name:  "contactNameAndSSN",
+ "value": "html value"
+ },
+ {
+ name:  "contactInfoFull",
+ "value": "html value"
+ },
+ {
+ name:  "contactsInfoFull",
+ "alias": "contactInfoFull",
+ "value": "html value"
+ },
+ {
+ name:  "groupedContactInfo",
+ "value": "html value"
+ },
+ {
+ name:  "contactInfo",
+ "value": "html value"
+ },
+ {
+ name:  "contactsInfo",
+ "alias": "contactInfo",
+ "value": "html value"
+ },
+ {
+ name:  "contactInfoMedium",
+ "value": "html value"
+ },
+ {   name:  "contactsInfoMedium",
+ "value": "html value",
+ "alias": 'contactInfoMedium'
+ },
+ {
+ name:  "contactInfoMedium2",
+ "value": "html value"
+ },
+ {   name:  "contactsInfoMedium2",
+ "value": "html value",
+ "alias": 'contactInfoMedium2'
+ },
+ {
+ name:  "contactInfoShares",
+ "value": "html value"
+ },
+ {
+ name:  "contactsInfoShares",
+ "alias": "contactInfoShares",
+ "value": "html value"
+ },
+ {
+ name:  "contactsInfoParts",
+ "alias": "contactInfoShares",
+ "value": "html value"
+ },
+ {
+ name:  "contactInfoParts",
+ "alias": "contactInfoShares",
+ "value": "html value"
+ },
+ {
+ name:  "contactInfoShort",
+ "value": "html value"
+ },
+ {
+ name:  "contactsInfoShort",
+ "alias": "contactInfoShort",
+ "value": "html value"
+ },
+ {
+ name:  "contactName",
+ "value": "html value"
+ },
+ {
+ name:  "contactsName",
+ "alias": "contactName",
+ "value": "html value"
+ },
+ {
+ name:  "estateDescription",
+ "value": "html value"
+ },
+ {
+ name:  "apartmentDescription",
+ "alias": "estateDescription",
+ "value": "html value"
+ },
+ {
+ name:  "communicationToken",
+ "value": "html value"
+ },
+ {
+ name:  "clacba",
+ "value": "html value"
+ },
+ {
+ name:  "easementTypeIsCOMMUNITYFACILITIES",
+ "value": "html value"
+ },
+ {
+ name:  "easementTypeIsCOMMUNITYFACILITIESFarming",
+ "value": "html value"
+ },
+ {
+ name:  "easementTypeIsNotCOMMUNITYFACILITIES",
+ "value": "html value"
+ },
+ {
+ name:  "easementTypeIsNotCOMMUNITYFACILITIESFarming",
+ "value": "html value"
+ },
+ {
+ name:  "commission",
+ "value": "html value"
+ },
+ {
+ name:  "commissionType",
+ "value": "html value"
+ },
+ {
+ name:  "commissionWithoutVAT",
+ "value": "html value"
+ },
+ {
+ name:  "faultOrDefectOnEstate",
+ "value": "html value"
+ },
+ {
+ name:  "newpage",
+ "value": "html value"
+ },
+ {
+ name:  "linebreak",
+ "value": "html value"
+ },
+ {
+ name:  "underline",
+ "value": "html value"
+ },
+ {
+ name:  "underlineShort",
+ "value": "html value"
+ },
+ {
+ name:  "paragraphnumber",
+ "value": "html value"
+ },
+ {
+ name:  "mortgageList",
+ "value": "html value"
+ }*/
