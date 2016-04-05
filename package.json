@@ -9,5 +9,8 @@
   "repository": {
     "type": "git",
     "url": "git+https://dasken@bitbucket.org/dasken/mspx-variables.git"
+  },
+  "dependencies": {
+    "browserify": "^13.0.0"
   }
 }
