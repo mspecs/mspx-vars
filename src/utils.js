@@ -1,8 +1,4 @@
-
-
-
-
-export const TemplateUtils = {
+const TemplateUtils = {
 
     escapeFormatting(s) {
         return  s ? '' : s
@@ -48,36 +44,16 @@ export const TemplateUtils = {
         }
     }
 };
-
+module.exports.utils = TemplateUtils;
 
 //tag functions for template literal
-export const TAG = {
-    raw(strings, values) {
-        return strings.raw[0];
-    },
+const TAG = {
     nonEmpty(strings, value) {
         if (!value) {
             return ``;
         }
-    },
-    escapeLatex(strings, values) {
-        return template.reduce((accumulator, part, i) => {
-            return accumulator + escapelatex(expressions[i - 1]) + part
-        });
-    },
-    empty(string, values) {
-        return values ? values + string : '';
-    },
+    }
 };
 
-
-
-
-
-
-
-
-
-
-
+module.exports.TAG = TAG;
 
