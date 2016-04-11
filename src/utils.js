@@ -1,3 +1,5 @@
+'use strict';
+
 const TemplateUtils = {
 
     escapeFormatting(s) {
@@ -30,6 +32,10 @@ const TemplateUtils = {
 
     },
 
+    formatMoney(s) {
+
+    },
+
     nobreakLatex(s) {
         return s ? '' : s.replace(/ /g, "~");
     },
@@ -38,9 +44,9 @@ const TemplateUtils = {
         return s ? '' : s.replace(/ /g, "&nbsp;");
     },
 
-    argEach(arguments, callback) {
-        for (let i = 0; i < arguments.length; i++ ) {
-            callback(arguments[i], i);
+    argEach(values, callback) {
+        for (let i = 0; i < values.length; i++ ) {
+            callback(values[i], i);
         }
     }
 };
