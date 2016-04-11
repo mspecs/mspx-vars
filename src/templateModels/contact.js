@@ -3,6 +3,7 @@
 let utils = require('../utils');
 let constants = require('../constants');
 let Base = require('./baseTemplateModel');
+let _ = require('_');
 let TAG = utils.TAG;
 
 module.exports.Contact = class Contact extends Base {
@@ -67,27 +68,11 @@ module.exports.Contact = class Contact extends Base {
                 return TAG.nonEmpty` & ${this._share}-del`;
         }
     }
+
+    get templates() {
+        return templates;
+    }
 }
-
-
-let isObjectSubSet = function(x, y) {
-    for (let key in y.keys()) {
-        if(x[key] !== y[key]) {
-            return false;
-        }
-    }
-    return true;
-};
-
-
-let findWhere = function(list, condition) {
-    for (var item of list || []) {
-        if (isObjectSubSet(item, condition)) {
-            return item;
-        }
-    }
-    return null;
-};
 
 
 let getTemplateString = function(data, isHtml) {
@@ -96,11 +81,10 @@ let getTemplateString = function(data, isHtml) {
     }
     let to = isHtml ? this.latex : this.html;
     return contacts.map((contact, index) => {
-        let share = findWhere(data.shares,{contactId : xc.id});
+        let share = _.findWhere(data.shares,{contactId : xc.id});
         return to.body(new Contact(contact,share)) + (contacts.length-1 !== index && to.separator ? to.separator : '');
     });
 };
-
 
 
 const templateAliases = [
@@ -142,10 +126,7 @@ const templateAliases = [
     }
 ];
 
-
-
-
-module.exports.templates = [
+let templates = [
     {
         name: "contactInfoFull",
         latex: {
@@ -171,19 +152,6 @@ module.exports.templates = [
         },
         getTemplateString
     },
-
-
-
-
-
-
-
-
-
-
-
-
-
     {
         name:  "groupedContactInfo",
         latex: {
@@ -279,7 +247,7 @@ module.exports.templates = [
 
             let to = isHtml ? this.latex : this.html;
             return contacts.map((xc, index) => {
-                let share = findWhere(data.shares,{contactId : xc.id});
+                let share = _.findWhere(data.shares,{contactId : xc.id});
                 return to.body(new Contact(contact,share))  + (index && (index % 2) !== 0 ? to.separator : '');
             });
         }
@@ -345,3 +313,6 @@ if(_.isUndefined(contacts) && !_.isUndefined(contact)) { var contacts = [contact
 %>`
     }
 ];
+
+
+templates.push.apply(templateAliases);

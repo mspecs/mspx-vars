@@ -62,4 +62,3 @@ const TAG = {
 };
 
 module.exports.TAG = TAG;
-

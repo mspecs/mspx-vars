@@ -11,11 +11,12 @@
     "url": "git+https://dasken@bitbucket.org/dasken/mspx-variables.git"
   },
   "dependencies": {
-    "browserify": "^13.0.0"
+    "browserify": "13.0.0",
+    "lodash": "4.9.0"
   },
   "devDependencies": {
-    "babel-core": "^6.7.6",
-    "chai": "^3.5.0",
-    "mocha": "^2.4.5"
+    "babel-core": "6.7.6",
+    "chai": "3.5.0",
+    "mocha": "2.4.5"
   }
 }
