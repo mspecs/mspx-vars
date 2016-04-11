@@ -17,11 +17,11 @@ module.exports.Commission = class Commission extends Base {
         this.currency = '';
     }
 
-    static formatPercent(amount) {
+    formatPercent(amount) {
         return (Math.floor((amount || 0) * 100) / 100) + '%';
     }
 
-    static isSold(strings, values) {
+    isSold(strings, values) {
         if (values[0]) {
             return strings + 'momsbefriat.';
         } else {
@@ -29,7 +29,7 @@ module.exports.Commission = class Commission extends Base {
         }
     };
 
-    static isNoLowerBounds(interval) {
+    isNoLowerBounds(interval) {
         return !!(interval || !interval.lowerBound || interval.lowerBound == 0);
     }
 
@@ -46,7 +46,7 @@ module.exports.Commission = class Commission extends Base {
     }
 
     get soldWithoutVAT() {
-        return this.pass(isSold`Arvodet är ${this.isSoldWithoutVAT}`);
+        return this.pass(this.isSold`Arvodet är ${this.isSoldWithoutVAT}`);
     }
 
     //TODO: I don't know if I named this getter correct, but it just returns this plain text only
@@ -71,7 +71,7 @@ module.exports.Commission = class Commission extends Base {
     }
 
     intervalPercentage(interval) {
-        return formatPercent(interval.percentage * 100 / (this.divisor * 100));
+        return this.formatPercent(interval.percentage * 100 / (this.divisor * 100));
     }
 
     get intervalNoLowerBound() {
@@ -84,7 +84,7 @@ module.exports.Commission = class Commission extends Base {
         let interval = intervals[0];
         return this.pass({
             html: ``,
-            latex: 'enligt stege\n' + isNoLowerBounds(interval) ? `makebox[15mm][r]{${this.intervalPercentage(interval)}} för köpeskilling i intervallet upp till ${this.formatMoney(interval.upperBound)}` : ``
+            latex: 'enligt stege\n' + this.isNoLowerBounds(interval) ? `makebox[15mm][r]{${this.intervalPercentage(interval)}} för köpeskilling i intervallet upp till ${this.formatMoney(interval.upperBound)}` : ``
         });
     }
 
@@ -102,10 +102,8 @@ module.exports.Commission = class Commission extends Base {
     get paidWithInterval() {
         let intervals = this.commissionIntervals;
         if (!intervals || !intervals.length) {
-            return '';
-        } else if (intervals && intervals.length == 0) {
             return this.dash;
-        } else if (intervals && intervals.length <= 1 && isNoLowerBounds(intervals[0])) {
+        } else if (intervals && intervals.length <= 1 && this.isNoLowerBounds(intervals[0])) {
             return this.intervalNoLowerBound;
         } else {
             return `${this.noLowerBound}
@@ -113,28 +111,51 @@ module.exports.Commission = class Commission extends Base {
         }
     }
 
+    get provision() {
+        let printString = '';
+        if (this.commissionType !== 'ENUM_COMMISSION_TYPE_MIXED' && this.minimumCommissionFee) {
+            printString = this.pass('Provision ');
+        }
 
+        if (this.minimumCommissionFee) printString += ` lägst med ${this.formatMoney(this.minimumCommissionFee)}`;
+        if (this.maximumCommissionFee) printString += `${this.minimumCommissionFee ? ' och' : '' } högst med ${this.formatMoney(this.maximumCommissionFee)}`;
 
+        return printString;
+    }
 
-
+    get provisionType() {
+        return this.pass({
+            html: ``,
+            latex: `${this.commissionType == 'ENUM_COMMISSION_TYPE_MIXED' ? 'Arvodet och provisionen' : 'Provisionen'} enligt ovan är ${this.isSoldWithoutVAT ? 'momsbefriat' : 'exklusive moms.'}
+                    ${this.commissionType == 'ENUM_COMMISSION_TYPE_MIXED' ? 'Arvodet och provisionen' : 'Provisionen'} kan överlåtas på juridisk person under vilken fastighetsmäklaren arbetar.`
+        });
+    }
 };
 
 module.exports.templates = [
     {
         name: 'commissionWithoutVAT',
         latex: {
-            body(commission) {
+            body(commission) { // blaaw
+                let commissionPrint = '';
                 switch (commission.commissionType) {
                     case 'ENUM_COMMISSION_TYPE_FIXED_PRICE':
-                        return `${commission.sum}
-                                ${commission.soldWithoutVAT}
-                                ${commission.broker}`;
+                        commissionPrint = `${commission.sum}
+                                            ${commission.soldWithoutVAT}
+                                            ${commission.broker}`;
+                        break;
                     case 'ENUM_COMMISSION_TYPE_MIXED':
-                        return `${commission.baseFee}`;
+                        commissionPrint = `${commission.baseFee}`;
+                        break;
                     default:
-                        return `${commission.provisionPaid}
-                                ${commission.paidWithInterval}`;
+                        commissionPrint = `${commission.provisionPaid}
+                                            ${commission.paidWithInterval}`;
+                        break;
                 }
+                commissionPrint += commission.provision;
+                commissionPrint += commission.provisionType;
+
+                return commissionPrint;
             }
         },
         html: {
