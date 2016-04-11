@@ -2,8 +2,9 @@
  * Created by rasulniyazimbetov on 11/04/16.
  */
 
-
-var commission = new require('../src/templateModels').Commission;
+var assert = require('chai').assert;
+//var Commission = new require('../src/templateModels/commission');
+var Classes = new require('../src/templateModels');
 /*var user = new require('../src/templateModels/').User;
 
 describe('USER', function() {
@@ -14,8 +15,10 @@ describe('USER', function() {
 });*/
 
 describe('COMMISSION', () => {
+    var commission = new Classes.Commission();
     it('shall test commission', (done) => {
-        console.log('hello world');
+        var format = commission.formatMoney(5);
+        assert.equal(format, 'hello world');
         done();
     });
 });

@@ -3,17 +3,27 @@
  */
 'use strict';
 
-//var utils = require('../utils');
+var utils = require('../utils');
 var constants = require('../constants');
-var Base = require('./baseTemplateModel').Base;
-//var TAG = utils.TAG;
+var Base = require('./baseTemplateModel');
+var TAG = utils.TAG;
 
-module.exports.Commission = class Commission extends Base {
+module.exports = class Commission extends Base {
 
     constructor(data, share, isHtml) {
         super();
         Object.assign(this, data);
         this._share = share;
+        this.currency = '';
+    }
+
+    formatMoney(amount) {
+        switch (this.type) {
+            case constants.LATEX:
+                return `${amount}&nbsp;${this.currency}`;
+            case constants.HTML:
+                return `${amount}~${this.currency}`;
+        }
     }
 
     // {return formatAmount(x) + '~' + currency};

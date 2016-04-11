@@ -1,8 +1,8 @@
 'use strict';
 
-module.exports.Base = class Base {
+module.exports = class Base {
     constructor() {
-        setIsLatex();
+        this.setIsLatex();
     }
 
     setIsHtml() {

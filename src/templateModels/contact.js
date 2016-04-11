@@ -2,7 +2,7 @@
 
 let utils = require('../utils');
 let constants = require('../constants');
-let Base = require('./baseTemplateModel').Base;
+let Base = require('./baseTemplateModel');
 let TAG = utils.TAG;
 
 module.exports.Contact = class Contact extends Base {
