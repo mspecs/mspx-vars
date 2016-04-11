@@ -3,10 +3,10 @@
 let utils = require('../utils');
 let constants = require('../constants');
 let Base = require('./baseTemplateModel');
-let _ = require('_');
+let _ = require('lodash');
 let TAG = utils.TAG;
 
-module.exports.Contact = class Contact extends Base {
+module.exports = class Contact extends Base {
     constructor(data, share, isHtml) {
         super();
         Object.assign(this,data);
@@ -70,7 +70,7 @@ module.exports.Contact = class Contact extends Base {
     }
 
     get templates() {
-        return templates;
+        return templates || [];
     }
 }
 

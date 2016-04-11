@@ -1,5 +1,5 @@
 module.exports = {
-    User: require('./contact'),
+    Contact: require('./contact'),
     Commission: require('./commission'),
 };
 

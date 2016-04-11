@@ -22,3 +22,14 @@ describe('COMMISSION', () => {
         done();
     });
 });
+
+
+
+describe('CONTACT', () => {
+    var contact = new Classes.Contact();
+    describe('templates', ()=> {
+        it('should get templates and return full list of templates and aliases', () => {
+            assert.equal(contact.templates.length > 7);
+        });
+    })
+});

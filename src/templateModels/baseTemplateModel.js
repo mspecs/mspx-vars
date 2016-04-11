@@ -1,10 +1,9 @@
 'use strict';
-let _ = require('_');
+let _ = require('lodash');
 
 module.exports = class Base {
     constructor() {
         this.setIsLatex();
-        this.templates = [];
     }
 
     setIsHtml() {
