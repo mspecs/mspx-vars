@@ -18,11 +18,10 @@ describe('COMMISSION', () => {
     var commission = new Classes.Commission();
     it('shall test commission', (done) => {
         var format = commission.formatMoney(5);
-        assert.equal(format, 'hello world');
+        assert.equal(format, '5~');
         done();
     });
 });
-
 
 
 describe('CONTACT', () => {
