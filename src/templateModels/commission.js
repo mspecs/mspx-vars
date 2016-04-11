@@ -8,31 +8,20 @@ var constants = require('../constants');
 var Base = require('./baseTemplateModel');
 var TAG = utils.TAG;
 
-module.exports = class Commission extends Base {
+module.exports.Commission = class Commission extends Base {
 
     constructor(data, share, isHtml) {
-        super();
+        super(isHtml);
         Object.assign(this, data);
         this._share = share;
         this.currency = '';
     }
 
-    // {return formatAmount(x) + '~' + currency};
-    formatMoney(amount) {
-        switch (this.type) {
-            case constants.HTML:
-                return `${amount}&nbsp;${this.currency}`;
-            case constants.LATEX:
-                return `${amount}~${this.currency}`;
-        }
-    }
-
-    //var formatPercentage = function(x) {return (Math.floor((x || 0) * 100) / 100) +'\\\\%';};\
-    formatPercent(amount) {
+    static formatPercent(amount) {
         return (Math.floor((amount || 0) * 100) / 100) + '%';
     }
 
-    isSold(strings, values) {
+    static isSold(strings, values) {
         if (values[0]) {
             return strings + 'momsbefriat.';
         } else {
@@ -40,51 +29,121 @@ module.exports = class Commission extends Base {
         }
     };
 
+    static isNoLowerBounds(interval) {
+        return !!(interval || !interval.lowerBound || interval.lowerBound == 0);
+    }
+
+    formatMoney(amount) {
+        return this.pass({
+            html:   `${amount}&nbsp;${this.currency}`,
+            latex:  `${amount}~${this.currency}`
+        });
+    }
+
+
     get sum() {
-        switch (this.type) {
-            case constants.HTML:
-                return `Arvode kommer att utgå med ${this.formatMoney(this.commissionSum)}<br/><br/>`;
-            case constants.LATEX:
-                return `Arvode kommer att utgå med ${this.formatMoney(this.commissionSum)}\n\n`;
-        }
+        return this.pass(`Arvode kommer att utgå med ${this.formatMoney(this.commissionSum)}`);
     }
 
-    //print('Arvodet är ' + (commission.isSoldWithoutVAT ? 'momsbefriat.' : 'exklusive moms.') + '\\n\\n');\
     get soldWithoutVAT() {
-        switch (this.type) {
-             case constants.HTML:
-                 return this.isSold`Arvodet är ${this.isSoldWithoutVAT}` + `<br/><br/>`;
-            case constants.LATEX:
-                return this.isSold`Arvodet är ${this.isSoldWithoutVAT}` + `\n\n`;
-        }
+        return this.pass(isSold`Arvodet är ${this.isSoldWithoutVAT}`);
     }
 
-    //print('Arvodet kan överlåtas på juridisk person under vilken fastighetsmäklaren arbetar.\\n');\
-    // I don't know if I named this getter correct, but it just returns this plain text only
+    //TODO: I don't know if I named this getter correct, but it just returns this plain text only
     get broker() {
-        switch(this.type) {
-            case constants.HTML:
-                return 'Arvodet kan överlåtas på juridisk person under vilken fastighetsmäklaren arbetar.<br/><br/>>';
-            case constants.LATEX:
-                return 'Arvodet kan överlåtas på juridisk person under vilken fastighetsmäklaren arbetar.\n';
-        }
+        return this.pass('Arvodet kan överlåtas på juridisk person under vilken fastighetsmäklaren arbetar.');
     }
 
     get baseFee() {
-        
+        return this.pass(`Arvode kommer att utgå med ${this.formatMoney(this.commissionBaseFee)}. Därutöver kommer provision utgå`);
     }
 
-    /**
-    if(commission.commissionType == 'ENUM_COMMISSION_TYPE_FIXED_PRICE') {\
-      print('Arvode kommer att utgå med ' + formatMoney(commission.commissionSum) + '\\n\\n');\
-      print('Arvodet är ' + (commission.isSoldWithoutVAT ? 'momsbefriat.' : 'exklusive moms.') + '\\n\\n');\
-      print('Arvodet kan överlåtas på juridisk person under vilken fastighetsmäklaren arbetar.\\n');\
-    } else {\
-        if(commission.commissionType == 'ENUM_COMMISSION_TYPE_MIXED') {\
-          print('Arvode kommer att utgå med ' + formatMoney(commission.commissionBaseFee) + '. Därutöver kommer provision utgå ');\
-        } else {\
-          print('Provision ska utgå ');\
-    };\
-     */
+    // TODO: not sure with naming, need to select something better
+    get provisionPaid() {
+        return this.pass('Provision ska utgå');
+    }
+
+    get dash() {
+        return this.pass({
+            html: 'med -----------------',
+            latex: 'med \\xdash[103mm]{}'
+        });
+    }
+
+    intervalPercentage(interval) {
+        return formatPercent(interval.percentage * 100 / (this.divisor * 100));
+    }
+
+    get intervalNoLowerBound() {
+        let intervals = this.commissionIntervals;
+        return this.pass(`med ${this.intervalPercentage(intervals[0])} av  köpeskillingen.`);
+    }
+
+    get noLowerBound() {
+        let intervals  = this.commissionIntervals;
+        let interval = intervals[0];
+        return this.pass({
+            html: ``,
+            latex: 'enligt stege\n' + isNoLowerBounds(interval) ? `makebox[15mm][r]{${this.intervalPercentage(interval)}} för köpeskilling i intervallet upp till ${this.formatMoney(interval.upperBound)}` : ``
+        });
+    }
+
+    get intervalsPrint() {
+        let intervals = this.commissionIntervals;
+        return intervals.map((interval, index) => {
+            if (index == 0) return;
+            return this.pass({
+                html:   ``,
+                latex:  `\\makebox[15mm][r]{${this.intervalPercentage(interval)}} för köpeskilling i intervallet ${this.formatMoney(interval.lowerBound)} -- ${this.formatMoney(interval.upperBound)}`
+            });
+        });
+    }
+
+    get paidWithInterval() {
+        let intervals = this.commissionIntervals;
+        if (!intervals || !intervals.length) {
+            return '';
+        } else if (intervals && intervals.length == 0) {
+            return this.dash;
+        } else if (intervals && intervals.length <= 1 && isNoLowerBounds(intervals[0])) {
+            return this.intervalNoLowerBound;
+        } else {
+            return `${this.noLowerBound}
+                    ${this.intervalsPrint}`;
+        }
+    }
+
+
+
+
 
 };
+
+module.exports.templates = [
+    {
+        name: 'commissionWithoutVAT',
+        latex: {
+            body(commission) {
+                switch (commission.commissionType) {
+                    case 'ENUM_COMMISSION_TYPE_FIXED_PRICE':
+                        return `${commission.sum}
+                                ${commission.soldWithoutVAT}
+                                ${commission.broker}`;
+                    case 'ENUM_COMMISSION_TYPE_MIXED':
+                        return `${commission.baseFee}`;
+                    default:
+                        return `${commission.provisionPaid}
+                                ${commission.paidWithInterval}`;
+                }
+            }
+        },
+        html: {
+            body(commission) {
+
+            }
+        },
+        getTemplateString(data, isHtml) {
+
+        }
+    }
+];
