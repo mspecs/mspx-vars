@@ -3,12 +3,14 @@
  */
 'use strict';
 
+var _ = require('lodash');
+
 var utils = require('../utils');
 var constants = require('../constants');
 var Base = require('./baseTemplateModel');
 var TAG = utils.TAG;
 
-module.exports.Commission = class Commission extends Base {
+class Commission extends Base {
 
     constructor(data, share, isHtml) {
         super(isHtml);
@@ -130,17 +132,39 @@ module.exports.Commission = class Commission extends Base {
                     ${this.commissionType == 'ENUM_COMMISSION_TYPE_MIXED' ? 'Arvodet och provisionen' : 'Provisionen'} kan överlåtas på juridisk person under vilken fastighetsmäklaren arbetar.`
         });
     }
-};
 
-module.exports.templates = [
+    get templates() {
+
+        return commissionTemplates || null;
+
+        //var templateObject = _.findWhere(commissionTemplates, {name: templateName});
+        //if (!templateObject) return;
+        //
+        //templateObject
+        //
+        //return commissionTemplates || null;
+    }
+
+    getValue(templateName, isHtml) {
+        let templateObject = _.find(commissionTemplates, {name: templateName});
+        if (!templateObject) return;
+
+        return templateObject.getTemplateString(this, isHtml);
+    }
+}
+
+module.exports.Commission = Commission;
+
+var commissionTemplates = [
     {
         name: 'commissionWithoutVAT',
         latex: {
+            separator: `\\hline \\n`,
             body(commission) { // blaaw
                 let commissionPrint = '';
                 switch (commission.commissionType) {
                     case 'ENUM_COMMISSION_TYPE_FIXED_PRICE':
-                        commissionPrint = `${commission.sum}
+                        commissionPrint = String.raw`${commission.sum}
                                             ${commission.soldWithoutVAT}
                                             ${commission.broker}`;
                         break;
@@ -152,8 +176,8 @@ module.exports.templates = [
                                             ${commission.paidWithInterval}`;
                         break;
                 }
-                commissionPrint += commission.provision;
-                commissionPrint += commission.provisionType;
+                commissionPrint += String.raw`${commission.provision}`;
+                commissionPrint += String.raw`${commission.provisionType}`;
 
                 return commissionPrint;
             }
@@ -164,7 +188,9 @@ module.exports.templates = [
             }
         },
         getTemplateString(data, isHtml) {
-
+            var commission = data.commission;
+            let to = isHtml ? this.html : this.latex;
+            return to.body(new Commission(commission, data.share)) + to.separator;
         }
     }
 ];

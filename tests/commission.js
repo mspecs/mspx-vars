@@ -85,3 +85,33 @@ describe('COMMISSION HTML', () => {
         done();
     });
 });
+
+describe('COMMISSION TEMPLATE', () => {
+    it('shall test commission template', (done) => {
+        var testData = {
+            commission: data
+        };
+
+        var commission = new Classes.Commission(data, null, true);
+        var templateString = commission.templates[0].getTemplateString(testData, false);
+
+        assert.equal(templateString, 'Provision ska utgå\n                                            med \\xdash[103mm]{}Provisionen enligt ovan är exklusive moms.\n                    Provisionen kan överlåtas på juridisk person under vilken fastighetsmäklaren arbetar.\\hline \\n');
+        done();
+    });
+
+    it('shall print from template function', (done) => {
+        var testData = {
+            commission: data
+        };
+
+        list = new Collection('contacts', [data]);
+        list.gettemplae('sdfdsf');
+
+        var commission = new Classes.Commission(data);
+        var templateWithoutVAT = commissionTemplate.getValue('commissionWithoutVAT');
+        var templateWithVAT = commissionTemplate.getValue('commissionWithVAT');
+
+        assert.equal(templateWithoutVAT, 'Provision ska utgå\n                                            med \\xdash[103mm]{}Provisionen enligt ovan är exklusive moms.\n                    Provisionen kan överlåtas på juridisk person under vilken fastighetsmäklaren arbetar.\\hline \\n');
+        done();
+    });
+});
