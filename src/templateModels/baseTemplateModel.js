@@ -13,8 +13,4 @@ module.exports = class Base {
     setIsLatex() {
         this.type = 'LATEX';
     }
-
-    isMyTemplate(template) {
-        return _.findWhere(this.templates, {name: template.name});
-    }
 };

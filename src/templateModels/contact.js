@@ -1,12 +1,13 @@
 'use strict';
 
 let utils = require('../utils');
+let TAG = utils.TAG;
 let constants = require('../constants');
 let Base = require('./baseTemplateModel');
+let BaseCollection = require('./baseTemplateCollection');
 let _ = require('lodash');
-let TAG = utils.TAG;
 
-module.exports = class Contact extends Base {
+class Contact extends Base {
     constructor(data, share, isHtml) {
         super();
         Object.assign(this,data);
@@ -69,10 +70,20 @@ module.exports = class Contact extends Base {
         }
     }
 
-    get templates() {
-        return templates || [];
-    }
 }
+
+
+module.exports = class ContactTemplates extends BaseCollection {
+
+    static getTemplateString(data, templateName, type) {
+        return _.find(templates,{name:temlateName}).getTEmplateString(data,type);
+    }
+
+    static getTemplateList() {
+        return templates;
+    }
+};
+
 
 
 let getTemplateString = function(data, isHtml) {
