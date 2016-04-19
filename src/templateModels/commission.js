@@ -8,6 +8,7 @@ var _ = require('lodash');
 var utils = require('../utils');
 var constants = require('../constants');
 var Base = require('./baseTemplateModel');
+var BaseCollection = require('./baseTemplateCollection');
 var TAG = utils.TAG;
 
 class Commission extends Base {
@@ -154,6 +155,20 @@ class Commission extends Base {
 }
 
 module.exports.Commission = Commission;
+
+class CommissionTemplate extends BaseCollection {
+
+    static getTemplateString(data, templateName, type) {
+        return _.find(commissionTemplates, {name: templateName}).getTemplateString(data, type);
+    };
+
+    static getTemplateList() {
+        return commissionTemplates;
+    }
+}
+
+module.exports.CommissionTemplate = CommissionTemplate;
+
 
 var commissionTemplates = [
     {

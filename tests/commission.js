@@ -4,7 +4,7 @@
 
 var assert = require('chai').assert;
 //var Commission = new require('../src/templateModels/commission');
-var Classes = new require('../src/templateModels');
+var Classes = require('../src/templateModels');
 /*var user = new require('../src/templateModels/').User;
 
  describe('USER', function() {
@@ -38,80 +38,18 @@ var data = {
     currency: 'SEK',
 };
 
-describe('COMMISSION LATEX', () => {
-    var commission = new Classes.Commission(data);
-    it('shall get formatted money', (done) => {
-        var format = commission.formatMoney(5);
-        assert.equal(format, '5~');
-        done();
-    });
+describe('COMMISSION TEMPLATE CLASS', () => {
+    var testData = {
+        commission: data
+    };
 
-    it('shall test printing values', (done) => {
-        var printString = commission.sum + commission.soldWithoutVAT + commission.broker + commission.baseFee;
+    var CommissionTemplateClass = require('../src/templateModels/commission').CommissionTemplate;
 
-        var compareValue = `rvode kommer att utgå med 50000~\n\nArvodet är ,exklusive moms.\n\n
-        Arvodet kan överlåtas på juridisk person under vilken fastighetsmäklaren arbetar.\n\n
-        Arvode kommer att utgå med null~. Därutöver kommer provision utgå`;
-        assert.equal(printString, compareValue);
-        done();
-    });
+    it('shall test commission template class', (done) => {
 
-    it('shall print fixed commission price', (done) => {
-        var printString = `${commission.sum}
-                            ${commission.soldWithoutVAT}
-                            ${commission.broker}`;
-
-        var equalValue = `Arvode kommer att utgå med 50000~
-                            Arvodet är ,exklusive moms.
-                            Arvodet kan överlåtas på juridisk person under vilken fastighetsmäklaren arbetar.`;
-
-        assert.equal(printString, equalValue);
-        done();
-    });
-
-    it('shall test default pass', (done) => {
-        var value = commission.provisionPaid;
-        assert.equal(value, 'Provision ska utgå');
-        done();
-    });
-});
-
-describe('COMMISSION HTML', () => {
-    var commission = new Classes.Commission(data, null, true);
-
-    it('shall get formatted money', (done) => {
-        var format = commission.formatMoney(5);
-        assert.equal(format, '5&nbsp;');
-        done();
-    });
-});
-
-describe('COMMISSION TEMPLATE', () => {
-    it('shall test commission template', (done) => {
-        var testData = {
-            commission: data
-        };
-
-        var commission = new Classes.Commission(data, null, true);
-        var templateString = commission.templates[0].getTemplateString(testData, false);
-
-        assert.equal(templateString, 'Provision ska utgå\n                                            med \\xdash[103mm]{}Provisionen enligt ovan är exklusive moms.\n                    Provisionen kan överlåtas på juridisk person under vilken fastighetsmäklaren arbetar.\\hline \\n');
-        done();
-    });
-
-    it('shall print from template function', (done) => {
-        var testData = {
-            commission: data
-        };
-
-        list = new Collection('contacts', [data]);
-        list.gettemplae('sdfdsf');
-
-        var commission = new Classes.Commission(data);
-        var templateWithoutVAT = commissionTemplate.getValue('commissionWithoutVAT');
-        var templateWithVAT = commissionTemplate.getValue('commissionWithVAT');
-
-        assert.equal(templateWithoutVAT, 'Provision ska utgå\n                                            med \\xdash[103mm]{}Provisionen enligt ovan är exklusive moms.\n                    Provisionen kan överlåtas på juridisk person under vilken fastighetsmäklaren arbetar.\\hline \\n');
+        var result = CommissionTemplateClass.getTemplateString(testData, 'commissionWithoutVAT');
+        console.log(result);
+        assert.equal(result, 'hello world');
         done();
     });
 });
