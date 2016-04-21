@@ -4,29 +4,43 @@ let utils = require('../utils');
 let TAG = utils.TAG;
 let constants = require('../constants');
 let Base = require('./baseTemplateModel');
+let BaseCollection = require('./baseTemplateCollection');
 let _ = require('lodash');
 
 
-module.exports = class Easement extends Base {
+class Easement extends Base {
     constructor(logEntryId, description, isHtml) {
         super();
-        Object.assign(this,data);
-        this._share = share;
+        this.logEntryId = logEntryId;
+        this.description = description;
     }
 
     //need to change for html/latex ?
     toString() {
-        return (this.logEntryId || '') +  (logEntryId ? `(${this.description})`: `${this.description}`);
+        return (this.logEntryId || '') +  (this.logEntryId ? `(${this.description})`: `${this.description}`);
     }
 }
 
 
+module.exports = exports = class EasementTemplates extends BaseCollection {
+
+    static getTemplateString(data, templateName, type) {
+        return _.find(templates,{name:templateName}).getTemplateString(data,type);
+    }
+
+    static getTemplateList() {
+        return templates;
+    }
+};
+
+
+
 var getTemplateString = function(data, isHtml, filterFunction) {
     let to = isHtml ? this.latex : this.html;
-    var filteredE=_.filter(data.easments,filterFunction);
+    var filteredE=_.filter(data, filterFunction);
     return _.reduce(filteredE, (acc, x) => {
-        return to.body(new Easemente(x.logEntryId, x.description, isHtml));
-    }, to.header).slice(0, -1)
+        return acc + to.body(new Easement(x.logEntryId, x.description, isHtml));
+    }, to.header);
 };
 
 
@@ -43,12 +57,12 @@ let templates = [
         html:{
             header:'fastigheten har del i följande samfälligheter eller gemensamhetsanläggningar:\\n',
             separator: '<br>',
-            body(easementId, description) {
+            body(eastment) {
                 return eastment.toString() + '<br>';
             }
         },
         getTemplateString(data, isHtml) {
-            getTemplateString(data,isHtml, (x) => {
+            return getTemplateString.call(this, data,isHtml, (x) => {
                 return x.easementType === 'ENUMS_EASEMENTTYPE_COMMUNITYFACILITIES' || x.easementType === 'ENUMS_EASEMENTTYPE_JOINT_PROPERTY';
             })
         }
@@ -71,7 +85,7 @@ let templates = [
             }
         },
         getTemplateString(data, isHtml) {
-            getTemplateString(data,isHtml, (x) => {
+            return getTemplateString.call(this, isHtml, (x) => {
                 return x.easementType === 'ENUMS_EASEMENTTYPE_COMMUNITYFACILITIES' || x.easementType === 'ENUMS_EASEMENTTYPE_JOINT_PROPERTY';
             })
         }
@@ -95,7 +109,7 @@ let templates = [
             }
         },
         getTemplateString(data, isHtml) {
-            getTemplateString(data, isHtml, (x) => {
+            return getTemplateString.call(this, data, isHtml, (x) => {
                 return x.easementType !== 'ENUMS_EASEMENTTYPE_COMMUNITYFACILITIES' || x.easementType !== 'ENUMS_EASEMENTTYPE_JOINT_PROPERTY';
             })
         }
@@ -119,7 +133,7 @@ let templates = [
         }
     },
     getTemplateString(data, isHtml) {
-        getTemplateString(data, isHtml, (x) => {
+        return getTemplateString.call(this, data, isHtml, (x) => {
             return x.easementType !== 'ENUMS_EASEMENTTYPE_COMMUNITYFACILITIES' || x.easementType !== 'ENUMS_EASEMENTTYPE_JOINT_PROPERTY';
         })
     }
