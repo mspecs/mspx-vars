@@ -3,7 +3,7 @@ let _ = require('lodash');
 
 module.exports = class Base {
 
-    constructor() {
+    constructor(templateList) {
         this.setIsLatex();
     }
 
@@ -21,6 +21,10 @@ module.exports = class Base {
 
     static getTemplate(templateName) {
         return _.find(this.getTemplateList(), {name:templateName});
+    }
+
+    static getTemplateString(data, templateName, type) {
+        return _.find(this.getTemplateList(), {name: templateName}).getTemplateString(data, type);
     }
 
     //just for declaration purposes each child class needs to override

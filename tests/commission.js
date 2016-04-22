@@ -46,10 +46,20 @@ describe('COMMISSION TEMPLATE CLASS', () => {
     var CommissionTemplateClass = require('../src/templateModels/commission').CommissionTemplate;
 
     it('shall test commission template class', (done) => {
-
         var result = CommissionTemplateClass.getTemplateString(testData, 'commissionWithoutVAT');
         console.log(result);
         assert.equal(result, 'hello world');
         done();
+    });
+
+    it('shall test commission html', function() {
+        var result = CommissionTemplateClass.getTemplateString(testData, 'commissionWithoutVAT', true);
+        assert.equal(result, 'hello world');
+    });
+
+    it('shall get object class reference', function() {
+        var baseClass = CommissionTemplateClass.getBaseClass();
+
+        //assert.equal(baseClass, 'hello world');
     });
 });
