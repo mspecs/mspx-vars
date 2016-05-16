@@ -1,6 +1,4 @@
 'use strict';
-let _ = require('lodash');
-
 var constants = require('../constants');
 
 module.exports = class Base {

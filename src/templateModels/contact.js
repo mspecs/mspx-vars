@@ -5,7 +5,7 @@ let TAG = utils.TAG;
 let constants = require('../constants');
 let Base = require('./baseTemplateModel');
 let BaseCollection = require('./baseTemplateCollection');
-let _ = require('lodash');
+
 
 class Contact extends Base {
     constructor(data, share, isHtml) {

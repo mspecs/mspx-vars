@@ -4,7 +4,7 @@ let utils = require('../utils');
 let TAG = utils.TAG;
 let constants = require('../constants');
 let Base = require('./baseTemplateModel');
-let _ = require('lodash');
+
 
 
 module.exports = class Easement extends Base {

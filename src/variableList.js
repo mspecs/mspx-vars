@@ -1,10 +1,11 @@
 
 
 
-module.exports.Variables = [
+module.exports = [
     {
         name : 'deal.broker',
-        path :'deals.mainBrokerContactId'
+        path :'deals.mainBrokerContactId',
+        templateClass:'contacts'
     },
 
     {
