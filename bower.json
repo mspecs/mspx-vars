@@ -1,0 +1,10 @@
+{
+  "name": "mspex-vars",
+  "description": "mspecs vars",
+  "main": "./dist/mspx-vars-frontend.js",
+  "authors": [
+    "mspecs"
+  ],
+  "moduleType": [],
+  "private": true
+}
