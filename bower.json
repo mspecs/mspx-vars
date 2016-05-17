@@ -5,6 +5,14 @@
   "authors": [
     "mspecs"
   ],
-  "moduleType": [],
-  "private": true
+  "ignore": [
+    "node_modules",
+    "tests",
+    "src",
+    ".idea"
+  ],
+  "private": true,
+  "dependencies": {
+    "angular": "1.5.5"
+  }
 }
