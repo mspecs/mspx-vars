@@ -8,7 +8,7 @@ module.exports = function (grunt) {
                     ]
                 },
                 files: {
-                    "./dist/mspx-vars-frontend.js": ["src/variableHandler.js"]
+                    "./dist/mspx-vars-frontend.js": ["src_frontend/variableHandler.js"]
                 }
             }
         }

@@ -6,12 +6,13 @@
     "mspecs"
   ],
   "ignore": [
-    "node_modules",
-    "bower_components",
-    "tests",
     "src",
     ".idea",
-    "gruntfile.js"
+    "tests",
+    "gruntfile.js",
+    "src_frontend",
+    "node_modules",
+    "bower_components"
   ],
   "private": true,
   "dependencies": {

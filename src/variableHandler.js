@@ -18,7 +18,4 @@ var variableHandler = {
     }
 };
 
-
-global.VariableHandler = variableHandler;
-
-//module.exports = _variableHandler;
+module.exports = variableHandler;

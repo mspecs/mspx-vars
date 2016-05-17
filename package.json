@@ -2,7 +2,7 @@
   "name": "mspex_vars",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "src/variableHandler.js",
   "scripts": {
     "test": "mocha --compilers js:babel-core/register tests/"
   },

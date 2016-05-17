@@ -718,7 +718,6 @@ var TAG = {
 module.exports.TAG = TAG;
 
 },{}],8:[function(require,module,exports){
-(function (global){
 'use strict';
 
 var templates = require('./templateModels');
@@ -739,27 +738,35 @@ var variableHandler = {
     }
 };
 
-global.VariableHandler = variableHandler;
+module.exports = variableHandler;
 
-//module.exports = _variableHandler;
-
-}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{"./templateModels":6,"./variableList.js":9}],9:[function(require,module,exports){
 'use strict';
 
+/*
+* Variable meta data.
+* templateClasses lists all valid template classes and should be compatible with the "templateModels/index.js" naming scheme
+*
+*/
 module.exports = [{
     name: 'deal.broker',
     path: 'deals.mainBrokerContactId',
-    templateClass: 'contacts'
+    templateClasses: ['Contact']
 }, {
     name: 'deal.sellers',
-    path: 'deals.collections.sellers.contacts'
-}, {
-    name: 'deal.seller.account',
-    path: ''
+    path: 'deals.collections.sellers.contacts',
+    templateClasses: ['Contact']
 }, {
     name: 'deal.collections.buyers',
-    path: 'deals.buyerGroupId.collections.buyers.contacts'
+    path: 'deals.buyerGroupId.collections.buyers.contacts',
+    templateClasses: ['Contact']
 }];
 
-},{}]},{},[8]);
+},{}],10:[function(require,module,exports){
+'use strict';
+
+angular.module('mspxVariables').service('variableHandler', function () {
+    return require('../src/variableHandler.js');
+});
+
+},{"../src/variableHandler.js":8}]},{},[10]);
