@@ -8,6 +8,11 @@ var variableHandler = {
         var variable = _.find(variables, {name:variableName});
         var variableTemplates =_.pluck(templates,variable.templateClass);
         return {variable, templates:variableTemplates}
+    },
+
+    getVariablePath(variableName) {
+        var variable = _.find(variables, {name:variableName});
+        return variable ? variable.path : null;
     }
 };
 
