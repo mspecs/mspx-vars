@@ -13,12 +13,12 @@ module.exports = [
     },
     {
         name : 'deal.sellers',
-        path : 'deals.collections.sellers.contacts',
+        path : 'deals.collections.sellers.contactId',
         templateClasses:['Contact']
     },
     {
         name : 'deal.collections.buyers',
-        path :'deals.buyerGroupId.collections.buyers.contacts',
+        path :'deals.buyerGroupId.collections.buyers.contactId',
         templateClasses:['Contact']
     }
 ];
