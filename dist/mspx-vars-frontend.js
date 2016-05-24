@@ -733,7 +733,11 @@ var variableHandler = {
     },
     getVariablePath: function getVariablePath(variableName) {
         var variable = _.find(variables, { name: variableName });
-        return variable ? variable.path : null;
+        return variable ? variable.dependencies : null;
+    },
+    getVariableDependencies: function getVariableDependencies(variableName) {
+        var variable = _.find(variables, { name: variableName });
+        return variable ? variable.dependencies : null;
     }
 };
 
@@ -749,15 +753,15 @@ module.exports = variableHandler;
 */
 module.exports = [{
     name: 'deal.broker',
-    path: 'deals.mainBrokerContactId',
+    dependencies: ['deals.mainBrokerContactId'],
     templateClasses: ['Contact']
 }, {
     name: 'deal.sellers',
-    path: 'deals.collections.sellers.contactId',
+    dependencies: ['deals.collections.sellers.contactId', 'deals.collections.sellers'],
     templateClasses: ['Contact']
 }, {
     name: 'deal.collections.buyers',
-    path: 'deals.buyerGroupId.collections.buyers.contactId',
+    dependencies: ['deals.buyerGroupId', 'deals.buyerGroupId.collections.buyers', 'deals.buyerGroupId.collections.buyers.contactId'],
     templateClasses: ['Contact']
 }];
 

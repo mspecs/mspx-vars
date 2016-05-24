@@ -8,17 +8,20 @@
 module.exports = [
     {
         name : 'deal.broker',
-        path :'deals.mainBrokerContactId',
+        dependencies:['deals.mainBrokerContactId'],
         templateClasses:['Contact']
     },
     {
         name : 'deal.sellers',
-        path : 'deals.collections.sellers.contactId',
+        dependencies: ['deals.collections.sellers.contactId',
+                        'deals.collections.sellers'],
         templateClasses:['Contact']
     },
     {
-        name : 'deal.collections.buyers',
-        path :'deals.buyerGroupId.collections.buyers.contactId',
+        name: 'deal.collections.buyers',
+        dependencies:['deals.buyerGroupId',
+                        'deals.buyerGroupId.collections.buyers',
+                        'deals.buyerGroupId.collections.buyers.contactId'],
         templateClasses:['Contact']
     }
 ];

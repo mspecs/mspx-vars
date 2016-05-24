@@ -12,8 +12,14 @@ var variableHandler = {
 
     getVariablePath(variableName) {
         var variable = _.find(variables, {name:variableName});
-        return variable ? variable.path : null;
+        return variable ? variable.dependencies : null;
+    },
+
+    getVariableDependencies(variableName) {
+        var variable = _.find(variables, {name:variableName});
+        return variable ? variable.dependencies : null;
     }
+
 };
 
 module.exports = variableHandler;
