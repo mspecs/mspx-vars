@@ -4,10 +4,10 @@ let utils = require('../utils');
 let TAG = utils.TAG;
 let constants = require('../constants');
 let Base = require('./baseTemplateModel');
+var BaseCollection = require('./baseTemplateCollection');
 
 
-
-module.exports = class Easement extends Base {
+class Easement extends Base {
     constructor(logEntryId, description, isHtml) {
         super();
         Object.assign(this,data);
@@ -124,4 +124,14 @@ let templates = [
         })
     }
 }];
+
+module.exports.Easement = class EasementTemplate extends BaseCollection {
+    static getTemplateString(data, templateName, type) {
+        return _.find(templates, {name: templateName}).getTemplateString(data, type);
+    };
+
+    static getTemplateList() {
+        return templates;
+    }
+};
 

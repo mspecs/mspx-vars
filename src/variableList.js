@@ -30,6 +30,11 @@ module.exports = [
         templateClasses: ['Contact']
     },
     {
+        name: 'deal.commission',
+        dependencies:['deals.commissionId'],
+        templateClasses: ['Commission']
+    },
+    {
         name: 'deal.easement',
         dependencies:['deals.housingAssociationId'],
         templateClasses: ['Easement']

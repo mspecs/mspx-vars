@@ -686,8 +686,9 @@ var utils = require('../utils');
 var TAG = utils.TAG;
 var constants = require('../constants');
 var Base = require('./baseTemplateModel');
+var BaseCollection = require('./baseTemplateCollection');
 
-module.exports = function (_Base) {
+var Easement = function (_Base) {
     _inherits(Easement, _Base);
 
     function Easement(logEntryId, description, isHtml) {
@@ -811,12 +812,36 @@ var templates = [{
     }
 }];
 
-},{"../constants":1,"../utils":8,"./baseTemplateModel":3}],7:[function(require,module,exports){
+module.exports.Easement = function (_BaseCollection) {
+    _inherits(EasementTemplate, _BaseCollection);
+
+    function EasementTemplate() {
+        _classCallCheck(this, EasementTemplate);
+
+        return _possibleConstructorReturn(this, Object.getPrototypeOf(EasementTemplate).apply(this, arguments));
+    }
+
+    _createClass(EasementTemplate, null, [{
+        key: 'getTemplateString',
+        value: function getTemplateString(data, templateName, type) {
+            return _.find(templates, { name: templateName }).getTemplateString(data, type);
+        }
+    }, {
+        key: 'getTemplateList',
+        value: function getTemplateList() {
+            return templates;
+        }
+    }]);
+
+    return EasementTemplate;
+}(BaseCollection);
+
+},{"../constants":1,"../utils":8,"./baseTemplateCollection":2,"./baseTemplateModel":3}],7:[function(require,module,exports){
 'use strict';
 
 module.exports = {
     Contact: require('./contact'),
-    Commission: require('./commission'),
+    Commission: require('./commission').CommissionTemplate,
     Easement: require('./easement')
 };
 
@@ -909,6 +934,10 @@ module.exports = [{
     name: 'deal.housingAssociation',
     dependencies: ['deals.housingAssociationId'],
     templateClasses: ['Contact']
+}, {
+    name: 'deal.commission',
+    dependencies: ['deals.commissionId'],
+    templateClasses: ['Commission']
 }, {
     name: 'deal.easement',
     dependencies: ['deals.housingAssociationId'],
