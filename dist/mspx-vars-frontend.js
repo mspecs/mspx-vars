@@ -763,6 +763,14 @@ module.exports = [{
     name: 'deal.collections.buyers',
     dependencies: ['deals.buyerGroupId', 'deals.buyerGroupId.collections.buyers', 'deals.buyerGroupId.collections.buyers.contactId'],
     templateClasses: ['Contact']
+}, {
+    name: 'deal.housingAssociation',
+    dependencies: ['deals.housingAssociationId'],
+    templateClasses: ['Contact']
+}, {
+    name: 'deal.easement',
+    dependencies: ['deals.housingAssociationId'],
+    templateClasses: ['Easement']
 }];
 
 },{}],10:[function(require,module,exports){
