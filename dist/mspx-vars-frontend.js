@@ -369,7 +369,7 @@ var commissionTemplates = [{
     }
 }];
 
-},{"../constants":1,"../utils":7,"./baseTemplateCollection":2,"./baseTemplateModel":3}],5:[function(require,module,exports){
+},{"../constants":1,"../utils":8,"./baseTemplateCollection":2,"./baseTemplateModel":3}],5:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -671,15 +671,156 @@ var templates = [{
 
 templates.push.apply(templateAliases);
 
-},{"../constants":1,"../utils":7,"./baseTemplateCollection":2,"./baseTemplateModel":3}],6:[function(require,module,exports){
+},{"../constants":1,"../utils":8,"./baseTemplateCollection":2,"./baseTemplateModel":3}],6:[function(require,module,exports){
+'use strict';
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var utils = require('../utils');
+var TAG = utils.TAG;
+var constants = require('../constants');
+var Base = require('./baseTemplateModel');
+
+module.exports = function (_Base) {
+    _inherits(Easement, _Base);
+
+    function Easement(logEntryId, description, isHtml) {
+        _classCallCheck(this, Easement);
+
+        var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(Easement).call(this));
+
+        Object.assign(_this, data);
+        _this._share = share;
+        return _this;
+    }
+
+    //need to change for html/latex ?
+
+
+    _createClass(Easement, [{
+        key: 'toString',
+        value: function toString() {
+            return (this.logEntryId || '') + (logEntryId ? '(' + this.description + ')' : '' + this.description);
+        }
+    }]);
+
+    return Easement;
+}(Base);
+
+var _getTemplateString = function _getTemplateString(data, isHtml, filterFunction) {
+    var to = isHtml ? this.latex : this.html;
+    var filteredE = _.filter(data.easments, filterFunction);
+    return _.reduce(filteredE, function (acc, x) {
+        return to.body(new Easemente(x.logEntryId, x.description, isHtml));
+    }, to.header).slice(0, -1);
+};
+
+var templates = [{
+    name: "easementTypeIsCOMMUNITYFACILITIES",
+    latex: {
+        header: '\\\\vbox{\\n}\\nfastigheten har del i följande samfälligheter eller gemensamhetsanläggningar:\\n',
+        separator: '\\n',
+        body: function body(eastment) {
+            return eastment.toString() + '\\n';
+        }
+    },
+    html: {
+        header: 'fastigheten har del i följande samfälligheter eller gemensamhetsanläggningar:\\n',
+        separator: '<br>',
+        body: function body(easementId, description) {
+            return eastment.toString() + '<br>';
+        }
+    },
+    getTemplateString: function getTemplateString(data, isHtml) {
+        _getTemplateString(data, isHtml, function (x) {
+            return x.easementType === 'ENUMS_EASEMENTTYPE_COMMUNITYFACILITIES' || x.easementType === 'ENUMS_EASEMENTTYPE_JOINT_PROPERTY';
+        });
+    }
+}, {
+    name: "easementTypeIsCOMMUNITYFACILITIESFarming",
+    latex: {
+        header: '\\\\vbox{\\n}\\nområdet har del i följande samfälligheter eller gemensamhetsanläggningar:\\n',
+        separator: '\\n',
+        body: function body(eastment) {
+            return eastment.toString() + '\\n';
+        }
+    },
+    html: {
+        header: '\\\\vbox{\\n}\\nområdet har del i följande samfälligheter eller gemensamhetsanläggningar:\\n',
+        separator: '<br>',
+        body: function body(eastment) {
+            return eastment.toString() + '<br>';
+        }
+    },
+    getTemplateString: function getTemplateString(data, isHtml) {
+        _getTemplateString(data, isHtml, function (x) {
+            return x.easementType === 'ENUMS_EASEMENTTYPE_COMMUNITYFACILITIES' || x.easementType === 'ENUMS_EASEMENTTYPE_JOINT_PROPERTY';
+        });
+    }
+}, {
+    name: "easementTypeIsNotCOMMUNITYFACILITIES",
+    latex: {
+        header: 'fastigheten inte belastas av servitut, nyttjanderätter, ledningsrätter, utmätnings- eller kvarstadsanteckningar.',
+        noEasements: 'fastigheten inte belastas av servitut, nyttjanderätter, ledningsrätter, utmätnings- eller kvarstadsanteckningar.',
+        separator: '\\n',
+        body: function body(eastment) {
+            return eastment.toString() + '\\n';
+        }
+    },
+    html: {
+        header: 'fastigheten inte belastas av servitut, nyttjanderätter, ledningsrätter, utmätnings- eller kvarstadsanteckningar.',
+        noEasements: 'fastigheten inte belastas av servitut, nyttjanderätter, ledningsrätter, utmätnings- eller kvarstadsanteckningar.',
+        separator: '<br>',
+        body: function body(eastment) {
+            return eastment.toString() + '<br>';
+        }
+    },
+    getTemplateString: function getTemplateString(data, isHtml) {
+        _getTemplateString(data, isHtml, function (x) {
+            return x.easementType !== 'ENUMS_EASEMENTTYPE_COMMUNITYFACILITIES' || x.easementType !== 'ENUMS_EASEMENTTYPE_JOINT_PROPERTY';
+        });
+    }
+}, {
+    name: "easementTypeIsNotCOMMUNITYFACILITIESFarming",
+    latex: {
+        header: 'området endast belastas eller har förmån av följande servitut, nyttjanderätter, ledningsrätter, utmätnings- eller kvarstadsanteckningar:\\n',
+        noEasements: 'området inte belastas av servitut, nyttjanderätter, ledningsrätter, utmätnings- eller kvarstadsanteckningar.',
+        separator: '\\n',
+        body: function body(eastment) {
+            return eastment.toString() + '\\n';
+        }
+    },
+    html: {
+        header: 'området endast belastas eller har förmån av följande servitut, nyttjanderätter, ledningsrätter, utmätnings- eller kvarstadsanteckningar:\\n',
+        noEasements: 'området inte belastas av servitut, nyttjanderätter, ledningsrätter, utmätnings- eller kvarstadsanteckningar.',
+        separator: '<br>',
+        body: function body(eastment) {
+            return eastment.toString() + '<br>';
+        }
+    },
+    getTemplateString: function getTemplateString(data, isHtml) {
+        _getTemplateString(data, isHtml, function (x) {
+            return x.easementType !== 'ENUMS_EASEMENTTYPE_COMMUNITYFACILITIES' || x.easementType !== 'ENUMS_EASEMENTTYPE_JOINT_PROPERTY';
+        });
+    }
+}];
+
+},{"../constants":1,"../utils":8,"./baseTemplateModel":3}],7:[function(require,module,exports){
 'use strict';
 
 module.exports = {
     Contact: require('./contact'),
-    Commission: require('./commission')
+    Commission: require('./commission'),
+    Easement: require('./easement')
 };
 
-},{"./commission":4,"./contact":5}],7:[function(require,module,exports){
+},{"./commission":4,"./contact":5,"./easement":6}],8:[function(require,module,exports){
 'use strict';
 
 var TemplateUtils = {
@@ -717,7 +858,7 @@ var TAG = {
 
 module.exports.TAG = TAG;
 
-},{}],8:[function(require,module,exports){
+},{}],9:[function(require,module,exports){
 'use strict';
 
 var templates = require('./templateModels');
@@ -728,7 +869,8 @@ var variableHandler = {
 
     getVariable: function getVariable(variableName, templateName) {
         var variable = _.find(variables, { name: variableName });
-        var variableTemplates = _.pluck(templates, variable.templateClass);
+        // var variableTemplates = _.pluck(templates, variable.templateClasses);
+        var variableTemplates = templates[variable.templateClasses[0]];
         return { variable: variable, templates: variableTemplates };
     },
     getVariablePath: function getVariablePath(variableName) {
@@ -743,7 +885,7 @@ var variableHandler = {
 
 module.exports = variableHandler;
 
-},{"./templateModels":6,"./variableList.js":9}],9:[function(require,module,exports){
+},{"./templateModels":7,"./variableList.js":10}],10:[function(require,module,exports){
 'use strict';
 
 /*
@@ -773,11 +915,11 @@ module.exports = [{
     templateClasses: ['Easement']
 }];
 
-},{}],10:[function(require,module,exports){
+},{}],11:[function(require,module,exports){
 'use strict';
 
 angular.module('mspxVariables', []).service('variableHandler', function () {
     return require('../src/variableHandler.js');
 });
 
-},{"../src/variableHandler.js":8}]},{},[10]);
+},{"../src/variableHandler.js":9}]},{},[11]);
