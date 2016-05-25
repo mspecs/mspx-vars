@@ -23,5 +23,15 @@ module.exports = [
                         'deals.buyerGroupId.collections.buyers',
                         'deals.buyerGroupId.collections.buyers.contactId'],
         templateClasses:['Contact']
+    },
+    {
+        name: 'deal.housingAssociation',
+        dependencies:['deals.housingAssociationId'],
+        templateClasses: ['Contact']
+    },
+    {
+        name: 'deal.easement',
+        dependencies:['deals.housingAssociationId'],
+        templateClasses: ['Easement']
     }
 ];
