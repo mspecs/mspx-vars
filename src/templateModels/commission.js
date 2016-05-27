@@ -3,8 +3,6 @@
  */
 'use strict';
 
-var _ = require('lodash');
-
 var utils = require('../utils');
 var constants = require('../constants');
 var Base = require('./baseTemplateModel');
