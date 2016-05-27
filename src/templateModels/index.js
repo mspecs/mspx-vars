@@ -1,6 +1,6 @@
 module.exports = {
     Contact: require('./contact'),
-    Commission: require('./commission').CommissionTemplate,
+    Commission: require('./commission'),
     Easement: require('./easement')
 };
 

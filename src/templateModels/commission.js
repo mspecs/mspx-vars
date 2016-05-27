@@ -3,6 +3,7 @@
  */
 'use strict';
 
+var _ = require('lodash');
 
 var utils = require('../utils');
 var constants = require('../constants');
@@ -153,12 +154,10 @@ class Commission extends Base {
     }
 }
 
-module.exports.Commission = Commission;
-
 class CommissionTemplate extends BaseCollection {
 
-    static getTemplateString(data, templateName, type) {
-        return _.find(commissionTemplates, {name: templateName}).getTemplateString(data, type);
+    static getTemplateString(data, deferred, templateName, type) {
+        return _.find(commissionTemplates, {name: templateName}).getTemplateString(data, deferred, type);
     };
 
     static getTemplateList() {
@@ -166,8 +165,7 @@ class CommissionTemplate extends BaseCollection {
     }
 }
 
-module.exports.CommissionTemplate = CommissionTemplate;
-
+module.exports = exports = CommissionTemplate;
 
 var commissionTemplates = [
     {
@@ -197,14 +195,20 @@ var commissionTemplates = [
             }
         },
         html: {
+            separator: '<br>',
             body(commission) {
-
+                return 'hello world';
             }
         },
-        getTemplateString(data, isHtml) {
+        getTemplateString(data, deferred, isHtml) { // this has to be on every function??? maybe we should loop it somehow
+            if (_.isBoolean(deferred)) {
+                isHtml = deferred;
+                deferred = {};
+            }
             var commission = data.commission;
             let to = isHtml ? this.html : this.latex;
-            return to.body(new Commission(commission, data.share)) + to.separator;
+            // need better way of sending the data
+            return to.body(new Commission(commission, deferred, to)) + to.separator;
         }
     }
 ];

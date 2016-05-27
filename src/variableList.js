@@ -37,6 +37,6 @@ module.exports = [
     {
         name: 'deal.easement',
         dependencies:['deals.housingAssociationId'],
-        templateClasses: ['Easement']
+        templateClass: 'Easement'
     }
 ];

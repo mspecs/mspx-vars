@@ -125,7 +125,7 @@ let templates = [
     }
 }];
 
-module.exports.Easement = class EasementTemplate extends BaseCollection {
+module.exports = exports = class EasementTemplate extends BaseCollection {
     static getTemplateString(data, templateName, type) {
         return _.find(templates, {name: templateName}).getTemplateString(data, type);
     };
