@@ -16850,8 +16850,6 @@ module.exports.TAG = TAG;
 },{}],10:[function(require,module,exports){
 'use strict';
 
-var _ = require('lodash');
-
 var templates = require('./templateModels');
 var variables = require('./variableList.js');
 
@@ -16887,7 +16885,7 @@ var variableHandler = {
 
 module.exports = variableHandler;
 
-},{"./templateModels":8,"./variableList.js":11,"lodash":1}],11:[function(require,module,exports){
+},{"./templateModels":8,"./variableList.js":11}],11:[function(require,module,exports){
 'use strict';
 
 /*
