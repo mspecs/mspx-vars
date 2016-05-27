@@ -1,7 +1,5 @@
 'use strict';
 
-var _ = require('lodash');
-
 var templates = require('./templateModels');
 var variables = require('./variableList.js');
 
