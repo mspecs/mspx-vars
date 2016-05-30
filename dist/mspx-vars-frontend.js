@@ -132,6 +132,8 @@ var Base = require('./baseTemplateModel');
 var BaseCollection = require('./baseTemplateCollection');
 var TAG = utils.TAG;
 
+//var _ = require('lodash');
+
 var Commission = function (_Base) {
     _inherits(Commission, _Base);
 
@@ -318,8 +320,11 @@ var CommissionTemplate = function (_BaseCollection) {
 
     _createClass(CommissionTemplate, null, [{
         key: 'getTemplateString',
-        value: function getTemplateString(data, deferred, templateName, type) {
-            return _.find(commissionTemplates, { name: templateName }).getTemplateString(data, deferred, type);
+        value: function getTemplateString(data, templateName, type) {
+            var templateObject = _.find(commissionTemplates, { name: templateName });
+            if (!templateObject) return;
+
+            return templateObject.getTemplateString(data, type);
         }
     }, {
         key: 'getTemplateList',
@@ -358,9 +363,91 @@ var commissionTemplates = [{
         }
     },
     html: {
-        separator: '<br>',
+        separator: '',
         body: function body(commission) {
             return 'hello world';
+        }
+    },
+    getTemplateString: function getTemplateString(data, deferred, isHtml) {
+        // this has to be on every function??? maybe we should loop it somehow
+        if (_.isBoolean(deferred)) {
+            isHtml = deferred;
+            deferred = {};
+        }
+        var commission = data.commission;
+        var to = isHtml ? this.html : this.latex;
+        // need better way of sending the data
+        return to.body(new Commission(commission, deferred, to)) + to.separator;
+    }
+}, {
+    name: 'commissionWithVAT',
+    latex: {
+        separator: '\\hline \\n',
+        body: function body(commission) {
+            // blaaw
+            var commissionPrint = '';
+            switch (commission.commissionType) {
+                case 'ENUM_COMMISSION_TYPE_FIXED_PRICE':
+                    commissionPrint = String.raw(_templateObject2, commission.sum, commission.soldWithoutVAT, commission.broker);
+                    break;
+                case 'ENUM_COMMISSION_TYPE_MIXED':
+                    commissionPrint = '' + commission.baseFee;
+                    break;
+                default:
+                    commissionPrint = commission.provisionPaid + '\n                                            ' + commission.paidWithInterval;
+                    break;
+            }
+            commissionPrint += String.raw(_templateObject3, commission.provision);
+            commissionPrint += String.raw(_templateObject3, commission.provisionType);
+
+            return commissionPrint;
+        }
+    },
+    html: {
+        separator: '',
+        body: function body(commission) {
+            return 'with vat';
+        }
+    },
+    getTemplateString: function getTemplateString(data, deferred, isHtml) {
+        // this has to be on every function??? maybe we should loop it somehow
+        if (_.isBoolean(deferred)) {
+            isHtml = deferred;
+            deferred = {};
+        }
+        var commission = data.commission;
+        var to = isHtml ? this.html : this.latex;
+        // need better way of sending the data
+        return to.body(new Commission(commission, deferred, to)) + to.separator;
+    }
+}, {
+    name: 'foo',
+    latex: {
+        separator: '\\hline \\n',
+        body: function body(commission) {
+            // blaaw
+            var commissionPrint = '';
+            switch (commission.commissionType) {
+                case 'ENUM_COMMISSION_TYPE_FIXED_PRICE':
+                    commissionPrint = String.raw(_templateObject2, commission.sum, commission.soldWithoutVAT, commission.broker);
+                    break;
+                case 'ENUM_COMMISSION_TYPE_MIXED':
+                    commissionPrint = '' + commission.baseFee;
+                    break;
+                default:
+                    commissionPrint = commission.provisionPaid + '\n                                            ' + commission.paidWithInterval;
+                    break;
+            }
+            commissionPrint += String.raw(_templateObject3, commission.provision);
+            commissionPrint += String.raw(_templateObject3, commission.provisionType);
+
+            return commissionPrint;
+        }
+    },
+    html: {
+        separator: '',
+        body: function body(commission) {
+            return 'wat wat!!';
         }
     },
     getTemplateString: function getTemplateString(data, deferred, isHtml) {
@@ -896,29 +983,60 @@ module.exports.TAG = TAG;
 var templates = require('./templateModels');
 var variables = require('./variableList.js');
 
+//var _ = require('lodash');
+
 var variableHandler = {
     //might not need to pass templateName to function, might want to just send all possible templates
+    //getVariable(variableName, templateName) {
+    //    var variable = _.find(variables, { name: variableName });
+    //    // var variableTemplates = _.pluck(templates, variable.templateClasses);
+    //    var templateClasses = _.pick(templates, variable.templateClasses);
+    //    // get template lass that we need only
+    //    var variableTemplate = _.find(templateClasses, function(templateClass) {
+    //        return _.find(templateClass.getTemplateList(), {name: templateName});
+    //    });
+    //    return { variable: variable, templates: variableTemplate };
+    //},
+    //getTemplate(variableName, templateName) {
+    //    var variable = _.find(variables, { name: variableName });
+    //    // var variableTemplates = _.pluck(templates, variable.templateClasses);
+    //    var templateClasses = _.pick(templates, variable.templateClasses);
+    //    // get template that we need only
+    //    return _.find(templateClasses, function(templateClass) {
+    //        return _.find(templateClass.getTemplateList(), {name: templateName});
+    //    });
+    //},
 
-    getVariable: function getVariable(variableName, templateName) {
+    getHtmlTemplate: function getHtmlTemplate(variableName, templateName, data) {
         var variable = _.find(variables, { name: variableName });
         // var variableTemplates = _.pluck(templates, variable.templateClasses);
         var templateClasses = _.pick(templates, variable.templateClasses);
-        // get template lass that we need only
-        var variableTemplate = _.find(templateClasses, function (templateClass) {
+        // get template that we need only
+        var templateClass = _.find(templateClasses, function (templateClass) {
             return _.find(templateClass.getTemplateList(), { name: templateName });
         });
-        return { variable: variable, templates: variableTemplate };
+
+        return templateClass.getTemplateString(data, templateName, true);
+    },
+    getTemplateClasses: function getTemplateClasses(variableName) {
+        var variable = _.find(variables, { name: variableName });
+        // var variableTemplates = _.pluck(templates, variable.templateClasses);
+        return _.pick(templates, variable.templateClasses);
+    },
+    getActiveTemplate: function getActiveTemplate(variableName, templateName) {
+        var variable = _.find(variables, { name: variableName });
+        // var variableTemplates = _.pluck(templates, variable.templateClasses);
+        var templateClasses = _.pick(templates, variable.templateClasses);
+        return _.find(templateClasses, function (templateClass) {
+            return _.find(templateClass.getTemplateList(), { name: templateName });
+        });
     },
     getTemplateList: function getTemplateList(variableName) {
         var variable = _.find(variables, { name: variableName });
         var templateClasses = _.pick(templates, variable.templateClasses);
         return _(templateClasses).map(function (templateClass) {
-            templateClass.getTemplateList();
+            return templateClass.getTemplateList();
         }).flatten().value();
-    },
-    getVariablePath: function getVariablePath(variableName) {
-        var variable = _.find(variables, { name: variableName });
-        return variable ? variable.dependencies : null;
     },
     getVariableDependencies: function getVariableDependencies(variableName) {
         var variable = _.find(variables, { name: variableName });

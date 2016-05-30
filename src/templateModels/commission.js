@@ -9,6 +9,8 @@ var Base = require('./baseTemplateModel');
 var BaseCollection = require('./baseTemplateCollection');
 var TAG = utils.TAG;
 
+//var _ = require('lodash');
+
 class Commission extends Base {
 
     constructor(data, share, isHtml) {
@@ -154,8 +156,11 @@ class Commission extends Base {
 
 class CommissionTemplate extends BaseCollection {
 
-    static getTemplateString(data, deferred, templateName, type) {
-        return _.find(commissionTemplates, {name: templateName}).getTemplateString(data, deferred, type);
+    static getTemplateString(data, templateName, type) {
+        let templateObject = _.find(commissionTemplates, {name: templateName});
+        if (!templateObject) return;
+
+        return templateObject.getTemplateString(data, type);
     };
 
     static getTemplateList() {
@@ -193,9 +198,94 @@ var commissionTemplates = [
             }
         },
         html: {
-            separator: '<br>',
+            separator: '',
             body(commission) {
                 return 'hello world';
+            }
+        },
+        getTemplateString(data, deferred, isHtml) { // this has to be on every function??? maybe we should loop it somehow
+            if (_.isBoolean(deferred)) {
+                isHtml = deferred;
+                deferred = {};
+            }
+            var commission = data.commission;
+            let to = isHtml ? this.html : this.latex;
+            // need better way of sending the data
+            return to.body(new Commission(commission, deferred, to)) + to.separator;
+        }
+    },
+    {
+        name: 'commissionWithVAT',
+        latex: {
+            separator: `\\hline \\n`,
+            body(commission) { // blaaw
+                let commissionPrint = '';
+                switch (commission.commissionType) {
+                    case 'ENUM_COMMISSION_TYPE_FIXED_PRICE':
+                        commissionPrint = String.raw`${commission.sum}
+                                            ${commission.soldWithoutVAT}
+                                            ${commission.broker}`;
+                        break;
+                    case 'ENUM_COMMISSION_TYPE_MIXED':
+                        commissionPrint = `${commission.baseFee}`;
+                        break;
+                    default:
+                        commissionPrint = `${commission.provisionPaid}
+                                            ${commission.paidWithInterval}`;
+                        break;
+                }
+                commissionPrint += String.raw`${commission.provision}`;
+                commissionPrint += String.raw`${commission.provisionType}`;
+
+                return commissionPrint;
+            }
+        },
+        html: {
+            separator: '',
+            body(commission) {
+                return 'with vat';
+            }
+        },
+        getTemplateString(data, deferred, isHtml) { // this has to be on every function??? maybe we should loop it somehow
+            if (_.isBoolean(deferred)) {
+                isHtml = deferred;
+                deferred = {};
+            }
+            var commission = data.commission;
+            let to = isHtml ? this.html : this.latex;
+            // need better way of sending the data
+            return to.body(new Commission(commission, deferred, to)) + to.separator;
+        }
+    },{
+        name: 'foo',
+        latex: {
+            separator: `\\hline \\n`,
+            body(commission) { // blaaw
+                let commissionPrint = '';
+                switch (commission.commissionType) {
+                    case 'ENUM_COMMISSION_TYPE_FIXED_PRICE':
+                        commissionPrint = String.raw`${commission.sum}
+                                            ${commission.soldWithoutVAT}
+                                            ${commission.broker}`;
+                        break;
+                    case 'ENUM_COMMISSION_TYPE_MIXED':
+                        commissionPrint = `${commission.baseFee}`;
+                        break;
+                    default:
+                        commissionPrint = `${commission.provisionPaid}
+                                            ${commission.paidWithInterval}`;
+                        break;
+                }
+                commissionPrint += String.raw`${commission.provision}`;
+                commissionPrint += String.raw`${commission.provisionType}`;
+
+                return commissionPrint;
+            }
+        },
+        html: {
+            separator: '',
+            body(commission) {
+                return 'wat wat!!';
             }
         },
         getTemplateString(data, deferred, isHtml) { // this has to be on every function??? maybe we should loop it somehow
