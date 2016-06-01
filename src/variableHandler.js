@@ -40,11 +40,13 @@ var variableHandler = {
     getTemplateClasses(variableName) {
         var variable = _.find(variables, { name: variableName });
         // var variableTemplates = _.pluck(templates, variable.templateClasses);
+        if (!variable) return;
         return _.pick(templates, variable.templateClasses);
     },
     getActiveTemplate(variableName, templateName) {
         var variable = _.find(variables, { name: variableName });
         // var variableTemplates = _.pluck(templates, variable.templateClasses);
+        if (!variable) return;
         var templateClasses = _.pick(templates, variable.templateClasses);
         return _.find(templateClasses, function(templateClass) {
             return _.find(templateClass.getTemplateList(), {name: templateName});
