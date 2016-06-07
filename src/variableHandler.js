@@ -62,8 +62,10 @@ var variableHandler = {
     getVariableDependencies(variableName) {
         var variable = _.find(variables, {name:variableName});
         return variable ? variable.dependencies : null;
-    }
-
+    },
+    getVariables() {
+        return variables;
+     }
 };
 
 module.exports = variableHandler;

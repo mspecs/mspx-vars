@@ -1043,6 +1043,9 @@ var variableHandler = {
     getVariableDependencies: function getVariableDependencies(variableName) {
         var variable = _.find(variables, { name: variableName });
         return variable ? variable.dependencies : null;
+    },
+    getVariables: function getVariables() {
+        return variables;
     }
 };
 
