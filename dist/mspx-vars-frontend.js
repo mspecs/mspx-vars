@@ -605,6 +605,7 @@ var getTemplateString = function getTemplateString(data, isHtml) {
         var contacts = [data.contact];
     }
     var to = isHtml ? this.latex : this.html;
+    if (!contacts) return;
     return contacts.map(function (contact, index) {
         var share = _.findWhere(data.shares, { contactId: xc.id });
         return to.body(new Contact(contact, share)) + (contacts.length - 1 !== index && to.separator ? to.separator : '');
