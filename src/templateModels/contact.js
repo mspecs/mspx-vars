@@ -76,7 +76,7 @@ class Contact extends Base {
 module.exports = class ContactTemplates extends BaseCollection {
 
     static getTemplateString(data, templateName, type) {
-        return _.find(templates,{name:temlateName}).getTEmplateString(data,type);
+        return _.find(templates,{name:templateName}).getTemplateString(data,type);
     }
 
     static getTemplateList() {

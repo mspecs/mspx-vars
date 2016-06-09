@@ -588,7 +588,7 @@ module.exports = function (_BaseCollection) {
     _createClass(ContactTemplates, null, [{
         key: 'getTemplateString',
         value: function getTemplateString(data, templateName, type) {
-            return _.find(templates, { name: temlateName }).getTEmplateString(data, type);
+            return _.find(templates, { name: templateName }).getTemplateString(data, type);
         }
     }, {
         key: 'getTemplateList',
