@@ -327,6 +327,14 @@ var CommissionTemplate = function (_BaseCollection) {
             return templateObject.getTemplateString(data, type);
         }
     }, {
+        key: 'getView',
+        value: function getView(templateName) {
+            var templateObject = _.find(commissionTemplates, { name: templateName });
+            if (!templateObject) return;
+
+            return templateObject.view;
+        }
+    }, {
         key: 'getTemplateList',
         value: function getTemplateList() {
             return commissionTemplates;
@@ -340,6 +348,7 @@ module.exports = exports = CommissionTemplate;
 
 var commissionTemplates = [{
     name: 'commissionWithoutVAT',
+    view: 'commission',
     latex: {
         separator: '\\hline \\n',
         body: function body(commission) {
@@ -381,6 +390,7 @@ var commissionTemplates = [{
     }
 }, {
     name: 'commissionWithVAT',
+    view: 'commission',
     latex: {
         separator: '\\hline \\n',
         body: function body(commission) {
@@ -422,6 +432,7 @@ var commissionTemplates = [{
     }
 }, {
     name: 'foo',
+    view: 'commission',
     latex: {
         separator: '\\hline \\n',
         body: function body(commission) {
@@ -987,30 +998,8 @@ var variables = require('./variableList.js');
 //var _ = require('lodash');
 
 var variableHandler = {
-    //might not need to pass templateName to function, might want to just send all possible templates
-    //getVariable(variableName, templateName) {
-    //    var variable = _.find(variables, { name: variableName });
-    //    // var variableTemplates = _.pluck(templates, variable.templateClasses);
-    //    var templateClasses = _.pick(templates, variable.templateClasses);
-    //    // get template lass that we need only
-    //    var variableTemplate = _.find(templateClasses, function(templateClass) {
-    //        return _.find(templateClass.getTemplateList(), {name: templateName});
-    //    });
-    //    return { variable: variable, templates: variableTemplate };
-    //},
-    //getTemplate(variableName, templateName) {
-    //    var variable = _.find(variables, { name: variableName });
-    //    // var variableTemplates = _.pluck(templates, variable.templateClasses);
-    //    var templateClasses = _.pick(templates, variable.templateClasses);
-    //    // get template that we need only
-    //    return _.find(templateClasses, function(templateClass) {
-    //        return _.find(templateClass.getTemplateList(), {name: templateName});
-    //    });
-    //},
-
     getHtmlTemplate: function getHtmlTemplate(variableName, templateName, data) {
         var variable = _.find(variables, { name: variableName });
-        // var variableTemplates = _.pluck(templates, variable.templateClasses);
         var templateClasses = _.pick(templates, variable.templateClasses);
         // get template that we need only
         var templateClass = _.find(templateClasses, function (templateClass) {
@@ -1021,13 +1010,11 @@ var variableHandler = {
     },
     getTemplateClasses: function getTemplateClasses(variableName) {
         var variable = _.find(variables, { name: variableName });
-        // var variableTemplates = _.pluck(templates, variable.templateClasses);
         if (!variable) return;
         return _.pick(templates, variable.templateClasses);
     },
     getActiveTemplate: function getActiveTemplate(variableName, templateName) {
         var variable = _.find(variables, { name: variableName });
-        // var variableTemplates = _.pluck(templates, variable.templateClasses);
         if (!variable) return;
         var templateClasses = _.pick(templates, variable.templateClasses);
         return _.find(templateClasses, function (templateClass) {
