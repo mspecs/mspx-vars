@@ -335,6 +335,13 @@ var CommissionTemplate = function (_BaseCollection) {
             return templateObject.view;
         }
     }, {
+        key: 'getScope',
+        value: function getScope(data) {
+            return {
+                commissions: data.commissions
+            };
+        }
+    }, {
         key: 'getTemplateList',
         value: function getTemplateList() {
             return commissionTemplates;
@@ -432,7 +439,7 @@ var commissionTemplates = [{
     }
 }, {
     name: 'foo',
-    view: 'commission',
+    view: 'contact-short',
     latex: {
         separator: '\\hline \\n',
         body: function body(commission) {

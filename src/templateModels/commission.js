@@ -170,6 +170,12 @@ class CommissionTemplate extends BaseCollection {
         return templateObject.view;
     }
 
+    static getScope(data) {
+        return {
+            commissions: data.commissions
+        };
+    }
+
     static getTemplateList() {
         return commissionTemplates;
     }
@@ -267,7 +273,7 @@ var commissionTemplates = [
         }
     },{
         name: 'foo',
-        view: 'commission',
+        view: 'contact-short',
         latex: {
             separator: `\\hline \\n`,
             body(commission) { // blaaw
