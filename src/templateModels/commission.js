@@ -163,6 +163,13 @@ class CommissionTemplate extends BaseCollection {
         return templateObject.getTemplateString(data, type);
     };
 
+    static getView(templateName) {
+        let templateObject = _.find(commissionTemplates, {name: templateName});
+        if (!templateObject) return;
+
+        return templateObject.view;
+    }
+
     static getTemplateList() {
         return commissionTemplates;
     }
@@ -173,6 +180,7 @@ module.exports = exports = CommissionTemplate;
 var commissionTemplates = [
     {
         name: 'commissionWithoutVAT',
+        view: 'commission',
         latex: {
             separator: `\\hline \\n`,
             body(commission) { // blaaw
@@ -216,6 +224,7 @@ var commissionTemplates = [
     },
     {
         name: 'commissionWithVAT',
+        view: 'commission',
         latex: {
             separator: `\\hline \\n`,
             body(commission) { // blaaw
@@ -258,6 +267,7 @@ var commissionTemplates = [
         }
     },{
         name: 'foo',
+        view: 'commission',
         latex: {
             separator: `\\hline \\n`,
             body(commission) { // blaaw
