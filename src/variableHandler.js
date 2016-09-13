@@ -2,7 +2,7 @@
 
 var templates = require('./templateModels');
 var variables = require('./variableList.js');
-
+var prettyVariableCollection;
 //var _ = require('lodash');
 
 var variableHandler = {
@@ -42,6 +42,18 @@ var variableHandler = {
     },
     getVariables() {
         return variables;
+    },
+    getPrettyVariableList() {
+        if (!prettyVariableCollection) {
+            prettyVariableCollection = {};
+            variables.forEach(function(variable) {
+                variable.templateClasses.forEach(function(templateClass) {
+                    var list = prettyVariableCollection[templateClass];
+                    list ? list.push(variable) : prettyVariableCollection[templateClass] = [variable];
+                });
+            });
+        }
+        return prettyVariableCollection;
     }
 };
 
