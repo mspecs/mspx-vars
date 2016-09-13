@@ -1001,7 +1001,7 @@ module.exports.TAG = TAG;
 
 var templates = require('./templateModels');
 var variables = require('./variableList.js');
-
+var prettyVariableCollection;
 //var _ = require('lodash');
 
 var variableHandler = {
@@ -1041,6 +1041,18 @@ var variableHandler = {
     },
     getVariables: function getVariables() {
         return variables;
+    },
+    getPrettyVariableList: function getPrettyVariableList() {
+        if (!prettyVariableCollection) {
+            prettyVariableCollection = {};
+            variables.forEach(function (variable) {
+                variable.templateClasses.forEach(function (templateClass) {
+                    var list = prettyVariableCollection[templateClass];
+                    list ? list.push(variable) : prettyVariableCollection[templateClass] = [variable];
+                });
+            });
+        }
+        return prettyVariableCollection;
     }
 };
 
@@ -1077,7 +1089,7 @@ module.exports = [{
 }, {
     name: 'deal.easement',
     dependencies: ['deals.housingAssociationId'],
-    templateClass: 'Easement'
+    templateClasses: ['Easement']
 }];
 
 },{}],11:[function(require,module,exports){
