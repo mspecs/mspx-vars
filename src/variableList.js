@@ -9,20 +9,20 @@ module.exports = [
     {
         name : 'deal.broker',
         dependencies:['deals.mainBrokerContactId'],
-        templateClasses:['Contact']
+        templateClasses:['Contact', 'Signature']
     },
     {
         name : 'deal.sellers',
         dependencies: ['deals.collections.sellers.contactId',
                         'deals.collections.sellers'],
-        templateClasses:['Contact']
+        templateClasses:['Contact', 'Signature']
     },
     {
         name: 'deal.collections.buyers',
         dependencies:['deals.buyerGroupId',
                         'deals.buyerGroupId.collections.buyers',
                         'deals.buyerGroupId.collections.buyers.contactId'],
-        templateClasses:['Contact']
+        templateClasses:['Contact', 'Signature']
     },
     {
         name: 'deal.housingAssociation',

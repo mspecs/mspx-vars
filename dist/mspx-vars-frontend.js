@@ -481,7 +481,7 @@ var commissionTemplates = [{
     }
 }];
 
-},{"../constants":1,"../utils":8,"./baseTemplateCollection":2,"./baseTemplateModel":3}],5:[function(require,module,exports){
+},{"../constants":1,"../utils":9,"./baseTemplateCollection":2,"./baseTemplateModel":3}],5:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -784,7 +784,7 @@ var templates = [{
 
 templates.push.apply(templateAliases);
 
-},{"../constants":1,"../utils":8,"./baseTemplateCollection":2,"./baseTemplateModel":3}],6:[function(require,module,exports){
+},{"../constants":1,"../utils":9,"./baseTemplateCollection":2,"./baseTemplateModel":3}],6:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -949,16 +949,188 @@ module.exports = exports = function (_BaseCollection) {
     return EasementTemplate;
 }(BaseCollection);
 
-},{"../constants":1,"../utils":8,"./baseTemplateCollection":2,"./baseTemplateModel":3}],7:[function(require,module,exports){
+},{"../constants":1,"../utils":9,"./baseTemplateCollection":2,"./baseTemplateModel":3}],7:[function(require,module,exports){
 'use strict';
 
 module.exports = {
     Contact: require('./contact'),
     Commission: require('./commission'),
-    Easement: require('./easement')
+    Easement: require('./easement'),
+    Signature: require('./signature')
 };
 
-},{"./commission":4,"./contact":5,"./easement":6}],8:[function(require,module,exports){
+},{"./commission":4,"./contact":5,"./easement":6,"./signature":8}],8:[function(require,module,exports){
+/**
+ * Created by rasulniyazimbetov on 06/10/16.
+ */
+
+'use strict';
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var utils = require('../utils');
+var constants = require('../constants');
+var Base = require('./baseTemplateModel');
+var BaseCollection = require('./baseTemplateCollection');
+var TAG = utils.TAG;
+
+var Signature = function (_Base) {
+    _inherits(Signature, _Base);
+
+    function Signature() {
+        _classCallCheck(this, Signature);
+
+        return _possibleConstructorReturn(this, Object.getPrototypeOf(Signature).apply(this, arguments));
+    }
+
+    _createClass(Signature, [{
+        key: 'getValue',
+        value: function getValue(templateName, isHtml) {
+            var templateObject = _.find(signatureTemplates, { name: templateName });
+            if (!templateObject) return;
+
+            return templateObject.getTemplateString();
+        }
+    }, {
+        key: 'templates',
+        get: function get() {
+            return signatureTemplates || null;
+        }
+    }]);
+
+    return Signature;
+}(Base);
+
+var SignatureTemplate = function (_BaseCollection) {
+    _inherits(SignatureTemplate, _BaseCollection);
+
+    function SignatureTemplate() {
+        _classCallCheck(this, SignatureTemplate);
+
+        return _possibleConstructorReturn(this, Object.getPrototypeOf(SignatureTemplate).apply(this, arguments));
+    }
+
+    _createClass(SignatureTemplate, null, [{
+        key: 'getTemplateString',
+        value: function getTemplateString(data, templateName, type) {
+            return _.find(signatureTemplates, { name: templateName }).getTemplateString(data, type);
+        }
+    }, {
+        key: 'getTemplateList',
+        value: function getTemplateList() {
+            return signatureTemplates;
+        }
+    }, {
+        key: 'getView',
+        value: function getView(templateName) {
+            var templateObject = _.find(signatureTemplates, { name: templateName });
+            return templateObject.view || templateName;
+        }
+    }, {
+        key: 'getValue',
+        value: function getValue(templateName, isHtml) {
+            var templateObject = _.find(signatureTemplates, { name: templateName });
+            if (!templateObject) return;
+
+            return templateObject.getTemplateString(this, isHtml);
+        }
+    }, {
+        key: 'isSignature',
+        value: function isSignature() {
+            return true;
+        }
+    }]);
+
+    return SignatureTemplate;
+}(BaseCollection);
+
+var dummySignatureTemplate = function dummySignatureTemplate(signatureType) {
+    return '<span style="width: 4cm;display: block;margin-top: 0.3cm;height: 0.5cm;border-bottom: 1px solid #756d6d;"></span><span style="margin-bottom: 1cm;margin-top: 0.2cm; width: 4cm; display: block;">Ort och datum</span><span style="width: 4cm; display: block;border-bottom: 1px solid #756d6d;"></span><span style="margin-bottom: 1cm;margin-top: 0.2cm;">' + signatureType + '</span>';
+};
+
+var signatureTemplates = [{
+    name: 'contactDateAndSign',
+    html: {
+        body: function body(contact) {
+            //return String.raw`<span>contact date and sign</span>`;
+            return dummySignatureTemplate('Contact name');
+        }
+    },
+    getTemplateString: function getTemplateString(data, isHtml) {
+        var to = this.html;
+        return to.body();
+    }
+}, {
+    name: 'spouseConsentSign',
+    html: {
+        body: function body(contact) {
+            //return String.raw`<span>spouse consent signature</span>`;
+            return dummySignatureTemplate('Spouse Consent');;
+        }
+    },
+    getTemplateString: function getTemplateString(data, isHtml) {
+        var to = this.html;
+        return to.body();
+    }
+}, {
+    name: 'sellerDealSignatures',
+    html: {
+        body: function body(contact) {
+            //return String.raw`<span>seller deal signature</span>`;
+            return dummySignatureTemplate('Seller');
+        }
+    },
+    getTemplateString: function getTemplateString(data, isHtml) {
+        var to = this.html;
+        return to.body();
+    }
+}, {
+    name: 'buyerDealSignatures',
+    html: {
+        body: function body(contact) {
+            //return String.raw`<span>buyer deal signature</span>`;
+            return dummySignatureTemplate('Buyer');
+        }
+    },
+    getTemplateString: function getTemplateString(data, isHtml) {
+        var to = this.html;
+        return to.body();
+    }
+}, {
+    name: 'dealSignatures',
+    html: {
+        body: function body(contact) {
+            //return String.raw`<span>deal signature</span>`;
+            return dummySignatureTemplate('Deal Contact');
+        }
+    },
+    getTemplateString: function getTemplateString(data, isHtml) {
+        var to = this.html;
+        return to.body();
+    }
+}, {
+    name: 'sellerContactSignees',
+    html: {
+        body: function body(contact) {
+            //return String.raw`<span>seller contact signees</span>`;
+            return dummySignatureTemplate('Seller Contacts');
+        }
+    },
+    getTemplateString: function getTemplateString(data, isHtml) {
+        var to = this.html;
+        return to.body();
+    }
+}];
+
+module.exports = exports = SignatureTemplate;
+
+},{"../constants":1,"../utils":9,"./baseTemplateCollection":2,"./baseTemplateModel":3}],9:[function(require,module,exports){
 'use strict';
 
 var TemplateUtils = {
@@ -996,7 +1168,7 @@ var TAG = {
 
 module.exports.TAG = TAG;
 
-},{}],9:[function(require,module,exports){
+},{}],10:[function(require,module,exports){
 'use strict';
 
 var templates = require('./templateModels');
@@ -1058,7 +1230,7 @@ var variableHandler = {
 
 module.exports = variableHandler;
 
-},{"./templateModels":7,"./variableList.js":10}],10:[function(require,module,exports){
+},{"./templateModels":7,"./variableList.js":11}],11:[function(require,module,exports){
 'use strict';
 
 /*
@@ -1069,15 +1241,15 @@ module.exports = variableHandler;
 module.exports = [{
     name: 'deal.broker',
     dependencies: ['deals.mainBrokerContactId'],
-    templateClasses: ['Contact']
+    templateClasses: ['Contact', 'Signature']
 }, {
     name: 'deal.sellers',
     dependencies: ['deals.collections.sellers.contactId', 'deals.collections.sellers'],
-    templateClasses: ['Contact']
+    templateClasses: ['Contact', 'Signature']
 }, {
     name: 'deal.collections.buyers',
     dependencies: ['deals.buyerGroupId', 'deals.buyerGroupId.collections.buyers', 'deals.buyerGroupId.collections.buyers.contactId'],
-    templateClasses: ['Contact']
+    templateClasses: ['Contact', 'Signature']
 }, {
     name: 'deal.housingAssociation',
     dependencies: ['deals.housingAssociationId'],
@@ -1092,11 +1264,11 @@ module.exports = [{
     templateClasses: ['Easement']
 }];
 
-},{}],11:[function(require,module,exports){
+},{}],12:[function(require,module,exports){
 'use strict';
 
 angular.module('mspxVariables', []).service('variableHandler', function () {
     return require('../src/variableHandler.js');
 });
 
-},{"../src/variableHandler.js":9}]},{},[11]);
+},{"../src/variableHandler.js":10}]},{},[12]);
